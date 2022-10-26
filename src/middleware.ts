@@ -35,7 +35,7 @@ export const isAuthenticated = async (ctx: Koa.Context, next: Koa.Next) => {
   if (ts > Config.tokenValidity + iat && refreshToken) {
     try {
       //console.log('refreshgin');
-      const r = await userManagement.reAuthenticate(refreshToken);
+      const r = await userManagement.refresh(refreshToken);
 
       if (!r.profile) {
         ctx.status = 403;

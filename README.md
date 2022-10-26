@@ -1,6 +1,7 @@
 # User Management as a Service [Nexys]
 
 [![Build and Test Package](https://github.com/nexys-system/user-management-aas/actions/workflows/test.yml/badge.svg)](https://github.com/nexys-system/user-management-aas/actions/workflows/test.yml)
+[![Publish](https://github.com/nexys-system/user-management-aas/actions/workflows/publish.yml/badge.svg)](https://github.com/nexys-system/user-management-aas/actions/workflows/publish.yml)
 [![NPM package](https://badge.fury.io/js/%40nexys%2Fuser-management-aas.svg)](https://www.npmjs.com/package/@nexys/user-management-aas)
 [![NPM package](https://img.shields.io/npm/v/@nexys/user-management-aas.svg)](https://www.npmjs.com/package/@nexys/user-management-aas)
 [![Bundleophobia](https://badgen.net/bundlephobia/min/@nexys/user-management-aas)](https://bundlephobia.com/result?p=@nexys/user-management-aas)

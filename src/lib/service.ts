@@ -1,6 +1,6 @@
-import { urlPrefix } from './constants';
-import * as T from './type';
-import * as U from './utils';
+import { urlPrefix } from "./constants";
+import * as T from "./type";
+import * as U from "./utils";
 
 class UserManagementService {
   request: <A = any>(path: string, payload: any) => Promise<A>;
@@ -11,37 +11,51 @@ class UserManagementService {
     this.getAccessToken = U.getAccessToken(jwtSecret);
   }
 
-  authenticate = (googleEmail: string) => {
-    const payload = {
-      value: googleEmail,
-      type: T.AuthenticationType.google
-    };
-
-    console.log({ payload });
-
-    return this.request('/authenticate', payload);
-  };
-
-  reAuthenticate = async (
-    refreshToken: string
+  signup = async (
+    profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
+    authentication: T.Authentication
   ): Promise<{
-    profile: T.Profile;
-    permissions: number[];
-    locale: T.Locale;
-  }> => this.request('/re-authenticate', { refreshToken });
-
-  signup = async (firstName: string, lastName: string, email: string) => {
+    uuid: string;
+    token: string;
+    authentication: { uuid: string };
+  }> => {
     const payload = {
-      profile: {
-        email,
-        firstName,
-        lastName
-      },
-      authentication: { value: email, type: T.AuthenticationType.google }
+      profile,
+      authentication,
     };
 
-    return this.request('/signup', payload);
+    return this.request("/signup", payload);
   };
+
+  authenticate = (
+    authentication: T.Authentication,
+    email?: string,
+    ip?: string
+  ): Promise<T.AuthenticationOut & { refreshToken: string }> =>
+    this.request("/authenticate", { authentication, email, ip });
+
+  refresh = async (refreshToken: string): Promise<T.AuthenticationOut> =>
+    this.request("/refresh", { refreshToken });
+
+  deleteRefreshToken = async (refreshToken: string) =>
+    this.request("/refresh/delete", { refreshToken });
+
+  deleteAllToken = async (uuid: string) =>
+    this.request("/refresh/delete/all", { uuid });
+
+  // oauth
+  oAuthUrl = async (
+    oAuthParams: T.OAuthParams,
+    state?: string,
+    scopes?: string[]
+  ): Promise<{ url: string }> =>
+    this.request("/oauth/url", { oAuthParams, state, scopes });
+
+  oAuthCallback = async (
+    code: string,
+    oAuthParams: T.OAuthParams
+  ): Promise<Pick<T.Profile, "firstName" | "lastName" | "email">> =>
+    this.request("/oauth/callback", { oAuthParams, code });
 }
 
 export default UserManagementService;
