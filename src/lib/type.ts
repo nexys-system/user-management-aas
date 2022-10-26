@@ -46,3 +46,13 @@ export interface OAuthParams {
   secret: string;
   redirectUrl: string;
 }
+
+export interface OAuthCallbackWithAuthenticationOptions {
+  isSignup: boolean;
+}
+
+export enum UserStatus {
+  active = 1,
+  pending = 2,
+  inactive = 3,
+}

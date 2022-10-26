@@ -13,10 +13,6 @@ const authenticationServiceToType = (
   }
 };
 
-interface OAuthCallbackWithAuthenticationOptions {
-  isSignup: boolean;
-}
-
 class UserManagementService {
   request: <A = any>(path: string, payload: any) => Promise<A>;
   getAccessToken: (id: string) => string;
@@ -29,28 +25,19 @@ class UserManagementService {
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication
-  ): Promise<
-    {
-      uuid: string;
-      authentication: { uuid: string };
-    } & T.Tokens
-  > => {
-    const r = await this.request<{
-      uuid: string;
-      token: string;
-      authentication: { uuid: string };
-    }>("/signup", {
+  ): Promise<T.AuthenticationOut & T.Tokens> => {
+    const r = await this.request<
+      T.AuthenticationOut & { refreshToken: string }
+    >("/signup", {
       profile,
       authentication,
     });
 
-    const accessToken = this.getAccessToken(r.uuid);
+    const accessToken = this.getAccessToken(r.profile.id);
 
     return {
-      uuid: r.uuid,
-      authentication: r.authentication,
+      ...r,
       accessToken,
-      refreshToken: r.token,
     };
   };
 
@@ -68,36 +55,11 @@ class UserManagementService {
     return { ...r, accessToken };
   };
 
-  oAuthCallbackWithAuthentication = async (
-    code: string,
-    oAuthParams: T.OAuthParams,
-    { isSignup }: Partial<OAuthCallbackWithAuthenticationOptions>
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
-    const profile = await this.oAuthCallback(code, oAuthParams);
-
-    const type = authenticationServiceToType(oAuthParams.service);
-
-    try {
-      if (isSignup) {
-        const r = await this.signup(profile, {
-          type,
-          value: profile.email,
-        });
-
-        return {
-          profile: { ...profile, id: r.uuid },
-          locale: { country: "", lang: "" },
-          permissions: [],
-          accessToken: r.accessToken,
-          refreshToken: r.refreshToken,
-        };
-      }
-
-      return this.authenticate({ type, value: profile.email });
-    } catch (err) {
-      throw Error((err as Error).message);
-    }
-  };
+  statusChange = async (uuid: string, status: T.UserStatus) =>
+    this.request<{ response: boolean }>("/status/change", {
+      uuid,
+      status,
+    });
 
   refresh = async (
     refreshToken: string
@@ -129,6 +91,33 @@ class UserManagementService {
     oAuthParams: T.OAuthParams
   ): Promise<Pick<T.Profile, "firstName" | "lastName" | "email">> =>
     this.request("/oauth/callback", { oAuthParams, code });
+
+  oAuthCallbackWithAuthentication = async (
+    code: string,
+    oAuthParams: T.OAuthParams,
+    { isSignup }: Partial<T.OAuthCallbackWithAuthenticationOptions>
+  ): Promise<T.AuthenticationOut & T.Tokens> => {
+    const profile = await this.oAuthCallback(code, oAuthParams);
+
+    const type = authenticationServiceToType(oAuthParams.service);
+
+    try {
+      if (isSignup) {
+        const r = await this.signup(profile, {
+          type,
+          value: profile.email,
+        });
+
+        await this.statusChange(r.profile.id, T.UserStatus.active);
+
+        return r;
+      }
+
+      return this.authenticate({ type, value: profile.email });
+    } catch (err) {
+      throw Error((err as Error).message);
+    }
+  };
 }
 
 export default UserManagementService;
