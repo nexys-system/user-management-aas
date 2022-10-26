@@ -33,7 +33,7 @@ class UserManagementService {
       authentication,
     });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(r.profile.uuid);
 
     return {
       ...r,
@@ -50,7 +50,7 @@ class UserManagementService {
       T.AuthenticationOut & { refreshToken: string }
     >("/authenticate", { authentication, email, ip });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(r.profile.uuid);
 
     return { ...r, accessToken };
   };
@@ -68,7 +68,7 @@ class UserManagementService {
       refreshToken,
     });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(r.profile.uuid);
 
     return { ...r, accessToken };
   };
@@ -108,7 +108,7 @@ class UserManagementService {
           value: profile.email,
         });
 
-        await this.statusChange(r.profile.id, T.UserStatus.active);
+        await this.statusChange(r.profile.uuid, T.UserStatus.active);
 
         return r;
       }
