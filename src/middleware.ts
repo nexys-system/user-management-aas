@@ -43,7 +43,7 @@ export const isAuthenticated = async (ctx: Koa.Context, next: Koa.Next) => {
         return;
       }
 
-      const accessToken = userManagement.getAccessToken(r.profile.id);
+      const accessToken = userManagement.getAccessToken(r.profile.uuid);
       ctx.cookies.set(Constants.cookieValues.accessToken, accessToken);
     } catch (err) {
       ctx.status = 403;

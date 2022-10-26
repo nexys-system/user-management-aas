@@ -1,4 +1,4 @@
-import { urlPrefix } from "./constants";
+import { urlPrefix, tokenValidityDefault } from "./constants";
 import * as T from "./type";
 import * as U from "./utils";
 
@@ -21,7 +21,11 @@ class UserManagementService {
     refreshToken?: string
   ) => Promise<T.AuthorizeOut>;
 
-  constructor(token: string, jwtSecret: string, tokenValidity: number) {
+  constructor(
+    token: string,
+    jwtSecret: string,
+    tokenValidity: number = tokenValidityDefault
+  ) {
     this.request = U.request(token, urlPrefix);
     this.getAccessToken = U.getAccessToken(jwtSecret);
     this.authorize = U.authorize(
