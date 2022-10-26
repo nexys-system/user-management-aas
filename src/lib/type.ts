@@ -4,6 +4,8 @@ export enum AuthenticationType {
   github = 3,
 }
 
+export type AuthenticationServices = "google" | "github";
+
 export interface Authentication {
   value: string;
   type: AuthenticationType;
@@ -33,8 +35,13 @@ export interface AuthenticationOut {
   permissions: Permission[];
 }
 
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface OAuthParams {
-  service: "google" | "github";
+  service: AuthenticationServices;
   clientId: string;
   secret: string;
   redirectUrl: string;
