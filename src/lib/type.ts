@@ -35,6 +35,12 @@ export interface AuthenticationOut {
   permissions: Permission[];
 }
 
+export type RefreshOut = AuthenticationOut & Pick<Tokens, "accessToken">;
+
+export type AuthorizeOut =
+  | ErrorAuthorization
+  | { accessToken?: string; id: string };
+
 export interface Tokens {
   accessToken: string;
   refreshToken: string;
@@ -55,4 +61,14 @@ export enum UserStatus {
   active = 1,
   pending = 2,
   inactive = 3,
+}
+
+export interface ErrorAuthorization {
+  body: any;
+  status: number;
+}
+
+export interface TokenShape {
+  id: string;
+  iat: number;
 }

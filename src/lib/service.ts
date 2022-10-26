@@ -16,10 +16,20 @@ const authenticationServiceToType = (
 class UserManagementService {
   request: <A = any>(path: string, payload: any) => Promise<A>;
   getAccessToken: (id: string) => string;
+  authorize: (
+    accessToken?: string,
+    refreshToken?: string
+  ) => Promise<T.AuthorizeOut>;
 
-  constructor(token: string, jwtSecret: string) {
+  constructor(token: string, jwtSecret: string, tokenValidity: number) {
     this.request = U.request(token, urlPrefix);
     this.getAccessToken = U.getAccessToken(jwtSecret);
+    this.authorize = U.authorize(
+      this.refresh,
+      this.getAccessToken,
+      jwtSecret,
+      tokenValidity
+    );
   }
 
   signup = async (
@@ -61,9 +71,7 @@ class UserManagementService {
       status,
     });
 
-  refresh = async (
-    refreshToken: string
-  ): Promise<T.AuthenticationOut & Pick<T.Tokens, "accessToken">> => {
+  refresh = async (refreshToken: string): Promise<T.RefreshOut> => {
     const r = await this.request<T.AuthenticationOut>("/refresh", {
       refreshToken,
     });
