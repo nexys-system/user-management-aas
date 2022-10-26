@@ -109,23 +109,29 @@ class UserManagementService {
     oAuthParams: T.OAuthParams,
     { isSignup }: Partial<T.OAuthCallbackWithAuthenticationOptions>
   ): Promise<T.AuthenticationOut & T.Tokens> => {
-    const profile = await this.oAuthCallback(code, oAuthParams);
+    const { firstName, lastName, email } = await this.oAuthCallback(
+      code,
+      oAuthParams
+    );
 
     const type = authenticationServiceToType(oAuthParams.service);
 
     try {
       if (isSignup) {
-        const r = await this.signup(profile, {
-          type,
-          value: profile.email,
-        });
+        const r = await this.signup(
+          { firstName, lastName, email },
+          {
+            type,
+            value: email,
+          }
+        );
 
         await this.statusChange(r.profile.uuid, T.UserStatus.active);
 
         return r;
       }
 
-      return this.authenticate({ type, value: profile.email });
+      return this.authenticate({ type, value: email });
     } catch (err) {
       throw Error((err as Error).message);
     }
