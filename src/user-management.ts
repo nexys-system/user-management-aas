@@ -1,6 +1,11 @@
 import * as Config from "./config";
-import UserManagementService from "./lib";
+import UserManagementService, { Middleware } from "./lib";
 
-const user = new UserManagementService(Config.token, Config.jwtSecret);
+const userManagement = new UserManagementService(
+  Config.token,
+  Config.jwtSecret
+);
 
-export default user;
+export const isAuthenticated = Middleware.isAuthenticated(userManagement);
+
+export default userManagement;

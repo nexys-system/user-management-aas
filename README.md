@@ -16,4 +16,4 @@
 - copy the token and generate JWT secret
 - initialize a new Node.js project
 - `yarn add @nexys/user-management-aas`
-- copy the files: `[config.ts, middleware.ts, user-management.ts]`
+- copy the following files to your poroject: `[config.ts, user-management.ts]`
