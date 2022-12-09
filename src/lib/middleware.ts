@@ -8,7 +8,7 @@ import UserManagementService from "./service";
 export const isAuthenticated =
   (userManagement: UserManagementService) =>
   async (ctx: Koa.Context, next: Koa.Next) => {
-    const accessToken = ctx.cookies.get(Constants.cookieValues.accessToken);
+    const accessToken:string | undefined = ctx.cookies.get(Constants.cookieValues.accessToken) || ctx.headers['authorization']?.slice(7);
     const refreshToken = ctx.cookies.get(Constants.cookieValues.refreshToken);
 
     const r = await userManagement.authorize(accessToken, refreshToken);
