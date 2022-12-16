@@ -32,7 +32,7 @@ export const isAuthenticatedNonMiddleware =
 export const isAuthenticated =
   (userManagement: UserManagementService) =>
   async (ctx: Koa.Context, next: Koa.Next) => {
-    await isAuthenticatedNonMiddleware(userManagement)
+    await isAuthenticatedNonMiddleware(userManagement)(ctx);
 
     return await next();
   };
