@@ -4,7 +4,7 @@ export enum AuthenticationType {
   github = 3,
 }
 
-export type AuthenticationServices = "google" | "github";
+export type AuthenticationServices = "google" | "github" | "zoho" | "swissid" | "microsoft"
 
 export interface Authentication {
   value: string;
