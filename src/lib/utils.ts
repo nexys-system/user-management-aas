@@ -113,3 +113,7 @@ export const authorize =
       return { status, body };
     }
   };
+
+
+export const isAuthService = (s: string): s is T.AuthenticationServices =>
+  ["google", "github", "zoho", "swissid", "microsoft"].includes(s);
