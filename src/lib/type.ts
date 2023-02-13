@@ -12,7 +12,7 @@ export interface Authentication {
 }
 
 export interface Profile {
-  uuid: string;
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
