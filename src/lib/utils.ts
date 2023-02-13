@@ -97,7 +97,7 @@ export const authorize =
             return { status, body };
           }
 
-          const accessToken = getAccessToken(r.profile.uuid);
+          const accessToken = getAccessToken(r.profile.id);
           return { accessToken, id };
         } catch (err) {
           const status = 403;
