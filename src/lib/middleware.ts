@@ -20,14 +20,14 @@ export const isAuthenticatedNonMiddleware =
       return;
     }
 
-    const { accessToken: newAccessToken, id } = r;
+    const { accessToken: newAccessToken, id, permissions, instanceId } = r;
 
     if (newAccessToken) {
       //const accessToken = userManagement.getAccessToken(id);
       ctx.cookies.set(Constants.cookieValues.accessToken, newAccessToken);
     }
 
-    ctx.state = { id };
+    ctx.state = { id, instanceId, permissions };
   };
 
 export const isAuthenticated =
