@@ -39,7 +39,7 @@ export const getAccessToken =
       instanceId,
       permissions,
     };
-    JWT.sign(tokenContent, jwtSecret);
+    return JWT.sign(tokenContent, jwtSecret);
   };
 
 export const verifyAccessToken = (
