@@ -4,7 +4,12 @@ export enum AuthenticationType {
   github = 3,
 }
 
-export type AuthenticationServices = "google" | "github" | "zoho" | "swissid" | "microsoft"
+export type AuthenticationServices =
+  | "google"
+  | "github"
+  | "zoho"
+  | "swissid"
+  | "microsoft";
 
 export interface Authentication {
   value: string;
@@ -16,6 +21,7 @@ export interface Profile {
   email: string;
   firstName: string;
   lastName: string;
+  instance: { uuid: string };
 }
 
 export interface Locale {
@@ -39,7 +45,7 @@ export type RefreshOut = AuthenticationOut & Pick<Tokens, "accessToken">;
 
 export type AuthorizeOut =
   | ErrorAuthorization
-  | { accessToken?: string; id: string };
+  | (Omit<TokenShape, "iat"> & { accessToken?: string });
 
 export interface Tokens {
   accessToken: string;
@@ -70,5 +76,7 @@ export interface ErrorAuthorization {
 
 export interface TokenShape {
   id: string;
+  instanceId: string;
+  permissions: number[];
   iat: number;
 }

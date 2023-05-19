@@ -6,9 +6,10 @@ import * as Utils from "./utils";
 import UserManagementService from "./service";
 
 export const isAuthenticatedNonMiddleware =
-  (userManagement: UserManagementService) =>
-  async (ctx: Koa.Context) => {
-    const accessToken:string | undefined = ctx.cookies.get(Constants.cookieValues.accessToken) || ctx.headers['authorization']?.slice(7);
+  (userManagement: UserManagementService) => async (ctx: Koa.Context) => {
+    const accessToken: string | undefined =
+      ctx.cookies.get(Constants.cookieValues.accessToken) ||
+      ctx.headers["authorization"]?.slice(7);
     const refreshToken = ctx.cookies.get(Constants.cookieValues.refreshToken);
 
     const r = await userManagement.authorize(accessToken, refreshToken);
@@ -22,12 +23,12 @@ export const isAuthenticatedNonMiddleware =
     const { accessToken: newAccessToken, id } = r;
 
     if (newAccessToken) {
-      const accessToken = userManagement.getAccessToken(id);
-      ctx.cookies.set(Constants.cookieValues.accessToken, accessToken);
+      //const accessToken = userManagement.getAccessToken(id);
+      ctx.cookies.set(Constants.cookieValues.accessToken, newAccessToken);
     }
 
     ctx.state = { id };
-};
+  };
 
 export const isAuthenticated =
   (userManagement: UserManagementService) =>

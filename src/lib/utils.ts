@@ -1,3 +1,5 @@
+// see https://stackoverflow.com/a/74112582/1659569
+/// <reference lib="dom" />
 import JWT from "jsonwebtoken";
 import * as T from "./type";
 
@@ -29,8 +31,16 @@ export const request =
     return r.json();
   };
 
-export const getAccessToken = (jwtSecret: string) => (id: string) =>
-  JWT.sign({ id }, jwtSecret);
+export const getAccessToken =
+  (jwtSecret: string) =>
+  (id: string, instanceId: string, permissions: number[]) => {
+    const tokenContent: Omit<T.TokenShape, "iat"> = {
+      id,
+      instanceId,
+      permissions,
+    };
+    JWT.sign(tokenContent, jwtSecret);
+  };
 
 export const verifyAccessToken = (
   token: string,
@@ -52,7 +62,11 @@ export const isErrorAuthorization = (
 export const authorize =
   (
     refresh: (refreshtoken: string) => Promise<T.RefreshOut>,
-    getAccessToken: (id: string) => string,
+    getAccessToken: (
+      id: string,
+      instanceId: string,
+      permissions: number[]
+    ) => string,
     jwtSecret: string,
     tokenValidity: number
   ) =>
@@ -75,7 +89,7 @@ export const authorize =
         return { status, body };
       }
 
-      const { id, iat } = verified;
+      const { id, instanceId, permissions, iat } = verified;
 
       if (!iat || typeof iat !== "number") {
         const status = 401;
@@ -97,8 +111,12 @@ export const authorize =
             return { status, body };
           }
 
-          const accessToken = getAccessToken(r.profile.id);
-          return { accessToken, id };
+          const accessToken = getAccessToken(
+            r.profile.id,
+            r.profile.instance.uuid,
+            r.permissions
+          );
+          return { accessToken, id, instanceId, permissions };
         } catch (err) {
           const status = 403;
           const body = { error: "something went wrong while refreshing token" };
@@ -106,14 +124,13 @@ export const authorize =
         }
       }
 
-      return { id };
+      return { id, instanceId, permissions };
     } catch (err) {
       const status = 401;
       const body = { error: (err as Error).message };
       return { status, body };
     }
   };
-
 
 export const isAuthService = (s: string): s is T.AuthenticationServices =>
   ["google", "github", "zoho", "swissid", "microsoft"].includes(s);

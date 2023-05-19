@@ -15,7 +15,11 @@ const authenticationServiceToType = (
 
 class UserManagementService {
   request: <A = any>(path: string, payload: any) => Promise<A>;
-  getAccessToken: (id: string) => string;
+  getAccessToken: (
+    id: string,
+    instanceId: string,
+    permissions: number[]
+  ) => string;
   authorize: (
     accessToken?: string,
     refreshToken?: string
@@ -47,7 +51,11 @@ class UserManagementService {
       authentication,
     });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(
+      r.profile.id,
+      r.profile.instance.uuid,
+      r.permissions
+    );
 
     return {
       ...r,
@@ -64,7 +72,11 @@ class UserManagementService {
       T.AuthenticationOut & { refreshToken: string }
     >("/authenticate", { authentication, email, ip });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(
+      r.profile.id,
+      r.profile.instance.uuid,
+      r.permissions
+    );
 
     return { ...r, accessToken };
   };
@@ -80,7 +92,11 @@ class UserManagementService {
       refreshToken,
     });
 
-    const accessToken = this.getAccessToken(r.profile.id);
+    const accessToken = this.getAccessToken(
+      r.profile.id,
+      r.profile.instance.uuid,
+      r.permissions
+    );
 
     return { ...r, accessToken };
   };
