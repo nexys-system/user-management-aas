@@ -101,8 +101,8 @@ class UserManagementService {
     return { ...r, accessToken };
   };
 
-  logout = async (refreshToken: string) =>
-    this.request("/logout", { refreshToken });
+  logout = async (uuid: string, refreshToken: string) =>
+    this.request("/logout", { uuid, refreshToken });
 
   logoutAll = async (uuid: string) => this.request("/logout/all", { uuid });
 
