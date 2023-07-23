@@ -42,12 +42,13 @@ class UserManagementService {
 
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
+    instance: {uuid: string},
     authentication: T.Authentication
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const r = await this.request<
       T.AuthenticationOut & { refreshToken: string }
     >("/signup", {
-      profile,
+      profile: {...profile, instance},
       authentication,
     });
 
