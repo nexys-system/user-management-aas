@@ -48,7 +48,8 @@ class UserManagementService {
     const r = await this.request<
       T.AuthenticationOut & { refreshToken: string }
     >("/signup", {
-      profile: {...profile, instance},
+      profile,
+      instance,
       authentication,
     });
 
