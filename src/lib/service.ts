@@ -1,3 +1,4 @@
+import JWT from 'jsonwebtoken';
 import { urlPrefix, tokenValidityDefault } from "./constants";
 import * as T from "./type";
 import * as U from "./utils";
@@ -25,11 +26,17 @@ class UserManagementService {
     refreshToken?: string
   ) => Promise<T.AuthorizeOut>;
 
+  instance: { uuid: string };
+  product: { id: number };
+
   constructor(
     token: string,
     jwtSecret: string,
     tokenValidity: number = tokenValidityDefault
   ) {
+    const tokenDecoded = JWT.decode(token);
+    this.instance = { uuid: tokenDecoded.instance };
+    this.product = { id: tokenDecoded.product };
     this.request = U.request(token, urlPrefix);
     this.getAccessToken = U.getAccessToken(jwtSecret);
     this.authorize = U.authorize(
@@ -42,8 +49,8 @@ class UserManagementService {
 
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
-    instance: {uuid: string},
-    authentication: T.Authentication
+    authentication: T.Authentication,
+    instance: {uuid: string} = this.instance,
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const r = await this.request<
       T.AuthenticationOut & { refreshToken: string }
