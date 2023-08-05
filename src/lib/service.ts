@@ -55,7 +55,7 @@ class UserManagementService {
 
     const accessToken = this.getAccessToken(
       r.profile.id,
-      r.profile.instance.uuid,
+      instance.uuid,
       r.permissions
     );
 
