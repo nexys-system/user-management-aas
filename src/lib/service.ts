@@ -141,7 +141,7 @@ class UserManagementService {
   oAuthCallbackWithAuthentication = async (
     code: string,
     oAuthParams: T.OAuthParams,
-    { isSignup, instance }: Partial<T.OAuthCallbackWithAuthenticationOptions>
+    { isSignup, instance = this.instance }: Partial<T.OAuthCallbackWithAuthenticationOptions>
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
@@ -156,18 +156,18 @@ class UserManagementService {
           throw Error("for signup, instance must be given/defined");
         }
 
-        const r = await this.signup(
+        const response = await this.signup(
           { firstName, lastName, email },
-          instance,
           {
             type,
             value: email,
-          }
+          },
+          instance
         );
 
-        await this.statusChange(r.profile.id, T.UserStatus.active);
+        await this.statusChange(response.profile.id, T.UserStatus.active);
 
-        return r;
+        return response;
       }
 
       return this.authenticate({ type, value: email });
