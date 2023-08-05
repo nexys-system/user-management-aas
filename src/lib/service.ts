@@ -40,7 +40,7 @@ class UserManagementService {
       throw Error('token could not be decoded');
     }
 
-    if (!('instance' in t && 'product' in t)) {
+    if (!('instance' in tokenDecoded && 'product' in tokenDecoded)) {
       throw Error('user management token: wrong shape');
     }
     
