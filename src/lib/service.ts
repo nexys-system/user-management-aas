@@ -35,6 +35,15 @@ class UserManagementService {
     tokenValidity: number = tokenValidityDefault
   ) {
     const tokenDecoded = JWT.decode(token);
+
+    if (!tokenDecoded || typeof tokenDecoded === 'string') {
+      throw Error('token could not be decoded');
+    }
+
+    if (!('instance' in t && 'product' in t)) {
+      throw Error('user management token: wrong shape');
+    }
+    
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, urlPrefix);
