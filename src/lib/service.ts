@@ -32,7 +32,10 @@ class UserManagementService {
   constructor(
     token: string,
     jwtSecret: string,
-    tokenValidity: number = tokenValidityDefault
+    options?: {
+      tokenValidity?: number,
+      urlPrefix?: string
+    } = {}
   ) {
     const tokenDecoded = JWT.decode(token);
 
@@ -46,13 +49,13 @@ class UserManagementService {
     
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
-    this.request = U.request(token, urlPrefix);
+    this.request = U.request(token, options.urlPrefix || urlPrefix);
     this.getAccessToken = U.getAccessToken(jwtSecret);
     this.authorize = U.authorize(
       this.refresh,
       this.getAccessToken,
       jwtSecret,
-      tokenValidity
+      options.tokenValidity || tokenValidityDefault
     );
   }
 
