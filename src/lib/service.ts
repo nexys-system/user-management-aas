@@ -32,7 +32,7 @@ class UserManagementService {
   constructor(
     token: string,
     jwtSecret: string,
-    options?: {
+    options: {
       tokenValidity?: number,
       urlPrefix?: string
     } = {}
