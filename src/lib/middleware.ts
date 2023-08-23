@@ -7,6 +7,7 @@ import UserManagementService from "./service";
 
 export const isAuthenticatedNonMiddleware =
   (userManagement: UserManagementService) => async (ctx: Koa.Context) => {
+    // get access and refresh tokens
     const accessToken: string | undefined =
       ctx.cookies.get(Constants.cookieValues.accessToken) ||
       ctx.headers["authorization"]?.slice(7);

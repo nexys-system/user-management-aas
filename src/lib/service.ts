@@ -1,3 +1,4 @@
+import JWT from "jsonwebtoken";
 import { urlPrefix, tokenValidityDefault } from "./constants";
 import * as T from "./type";
 import * as U from "./utils";
@@ -28,7 +29,10 @@ class UserManagementService {
   constructor(
     token: string,
     jwtSecret: string,
-    tokenValidity: number = tokenValidityDefault
+    options: {
+      jwtAlgorithm?: JWT.Algorithm;
+      tokenValidity?: number;
+    } = {}
   ) {
     this.request = U.request(token, urlPrefix);
     this.getAccessToken = U.getAccessToken(jwtSecret);
@@ -36,7 +40,8 @@ class UserManagementService {
       this.refresh,
       this.getAccessToken,
       jwtSecret,
-      tokenValidity
+      options.tokenValidity || tokenValidityDefault,
+      options.jwtAlgorithm
     );
   }
 

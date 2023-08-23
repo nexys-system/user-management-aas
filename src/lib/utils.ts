@@ -3,6 +3,8 @@
 import JWT from "jsonwebtoken";
 import * as T from "./type";
 
+export const jwtAlgorithmDefault: JWT.Algorithm = "RS256";
+
 export const request =
   (token: string, urlPrefix: string) =>
   async <A = any>(path: string, payload: any): Promise<A> => {
@@ -44,8 +46,15 @@ export const getAccessToken =
 
 export const verifyAccessToken = (
   token: string,
-  jwtSecret: string
-): T.TokenShape => JWT.verify(token, jwtSecret) as T.TokenShape;
+  jwtSecret: string,
+  algorithm?: JWT.Algorithm
+): T.TokenShape => {
+  const options: JWT.VerifyOptions | undefined = algorithm
+    ? { algorithms: [algorithm] }
+    : undefined;
+
+  return JWT.verify(token, jwtSecret, options) as T.TokenShape;
+};
 
 export const isErrorAuthorization = (
   a: T.ErrorAuthorization | any
@@ -67,8 +76,9 @@ export const authorize =
       instanceId: string,
       permissions: number[]
     ) => string,
-    jwtSecret: string,
-    tokenValidity: number
+    jwtSecretOrPublicKey: string,
+    tokenValidity: number,
+    algorithm?: JWT.Algorithm
   ) =>
   async (
     accessToken?: string,
@@ -81,7 +91,11 @@ export const authorize =
     }
 
     try {
-      const verified = verifyAccessToken(accessToken, jwtSecret);
+      const verified = verifyAccessToken(
+        accessToken,
+        jwtSecretOrPublicKey,
+        algorithm
+      );
 
       if (typeof verified === "string") {
         const status = 401;
