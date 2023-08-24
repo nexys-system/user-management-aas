@@ -41,7 +41,14 @@ export const getAccessToken =
       instanceId,
       permissions,
     };
-    return JWT.sign(tokenContent, jwtSecretOrPrivateKey, { algorithm });
+
+    const options: JWT.SignOptions = {};
+
+    if (algorithm) {
+      options.algorithm = algorithm;
+    }
+
+    return JWT.sign(tokenContent, jwtSecretOrPrivateKey, options);
   };
 
 export const verifyAccessToken = (
