@@ -31,9 +31,10 @@ class UserManagementService {
 
   constructor(
     token: string,
-    jwtSecret: string,
+    jwtSecret:
+      | string
+      | { publicKey: string; privateKey: string; algorithm: JWT.Algorithm },
     options: {
-      jwtAlgorithm?: JWT.Algorithm;
       tokenValidity?: number;
       urlPrefix?: string;
     } = {}
@@ -51,13 +52,16 @@ class UserManagementService {
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, options.urlPrefix || urlPrefix);
-    this.getAccessToken = U.getAccessToken(jwtSecret, options.jwtAlgorithm);
+    this.getAccessToken = U.getAccessToken(
+      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey,
+      typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined
+    );
     this.authorize = U.authorize(
       this.refresh,
       this.getAccessToken,
-      jwtSecret,
+      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.publicKey,
       options.tokenValidity || tokenValidityDefault,
-      options.jwtAlgorithm
+      typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined
     );
   }
 
