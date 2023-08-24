@@ -68,3 +68,26 @@ test("authorize asymetric", async () => {
   const expectedPayload = { id, instanceId, permissions };
   expect(authorizeResult).toEqual(expectedPayload);
 });
+
+test("sign an d verify asymetric jwt (just for reference)", () => {
+  const algorithm = "RS256";
+
+  const payload = { a: "bla" };
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+  });
+
+  // to string (pem format)
+  const ePublicKey = publicKey.export({ type: "spki", format: "pem" });
+  const ePrivateKey = privateKey.export({ type: "pkcs8", format: "pem" });
+
+  const token = jwt.sign(payload, ePrivateKey, { algorithm });
+
+  expect(typeof token).toBe("string");
+
+  const { iat, ...decoded } = jwt.verify(token, ePublicKey, {
+    algorithms: [algorithm],
+  }) as object as { iat: string };
+  expect(decoded).toEqual(payload);
+  expect(typeof iat).toBe("number");
+});
