@@ -61,6 +61,7 @@ export interface OAuthParams {
 
 export interface OAuthCallbackWithAuthenticationOptions {
   isSignup: boolean;
+  instance: {uuid: string};
 }
 
 export enum UserStatus {

@@ -36,5 +36,9 @@ export const isAuthenticated =
   async (ctx: Koa.Context, next: Koa.Next) => {
     await isAuthenticatedNonMiddleware(userManagement)(ctx);
 
-    return await next();
+    if ('id' in ctx.state && 'instanceId' in ctx.state) {    
+      return await next();
+    }
+
+    return;
   };
