@@ -42,7 +42,7 @@ test("authorize", async () => {
 });
 
 test("authorize asymetric", async () => {
-  const payload = { id, instanceId, permissions };
+  // generate public and private keys
   const algorithm = U.jwtAlgorithmDefault;
   const { privateKey, publicKey } = generateKeyPairSync("rsa", {
     modulusLength: 2048,
@@ -51,10 +51,11 @@ test("authorize asymetric", async () => {
   // to string (pem format)
   const ePublicKey = publicKey.export({ type: "spki", format: "pem" });
   const ePrivateKey = privateKey.export({ type: "pkcs8", format: "pem" });
+  // end generate pulbic/private
 
-  const token = jwt.sign(payload, ePrivateKey, { algorithm });
+  const getAccessToken = U.getAccessToken(ePrivateKey as string, algorithm);
+  const token = getAccessToken(id, instanceId, permissions);
 
-  const getAccessToken = () => "token";
   const authorizeFunc = U.authorize(
     refreshFunc,
     getAccessToken,
@@ -63,5 +64,7 @@ test("authorize asymetric", async () => {
     algorithm
   );
   const authorizeResult = await authorizeFunc(token);
-  expect(authorizeResult).toEqual(payload);
+
+  const expectedPayload = { id, instanceId, permissions };
+  expect(authorizeResult).toEqual(expectedPayload);
 });

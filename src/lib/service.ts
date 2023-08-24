@@ -51,7 +51,7 @@ class UserManagementService {
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, options.urlPrefix || urlPrefix);
-    this.getAccessToken = U.getAccessToken(jwtSecret);
+    this.getAccessToken = U.getAccessToken(jwtSecret, options.jwtAlgorithm);
     this.authorize = U.authorize(
       this.refresh,
       this.getAccessToken,

@@ -34,14 +34,14 @@ export const request =
   };
 
 export const getAccessToken =
-  (jwtSecret: string) =>
+  (jwtSecretOrPrivateKey: string, algorithm?: JWT.Algorithm) =>
   (id: string, instanceId: string, permissions: number[]) => {
     const tokenContent: Omit<T.TokenShape, "iat"> = {
       id,
       instanceId,
       permissions,
     };
-    return JWT.sign(tokenContent, jwtSecret);
+    return JWT.sign(tokenContent, jwtSecretOrPrivateKey, { algorithm });
   };
 
 export const verifyAccessToken = (
