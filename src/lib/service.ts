@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import JWT from "jsonwebtoken";
-=======
-import JWT from 'jsonwebtoken';
->>>>>>> d5276d08723def6385eda943044d6d0cbdbe0f67
 import { urlPrefix, tokenValidityDefault } from "./constants";
 import * as T from "./type";
 import * as U from "./utils";
@@ -37,25 +33,21 @@ class UserManagementService {
     token: string,
     jwtSecret: string,
     options: {
-<<<<<<< HEAD
       jwtAlgorithm?: JWT.Algorithm;
       tokenValidity?: number;
-=======
-      tokenValidity?: number,
-      urlPrefix?: string
->>>>>>> d5276d08723def6385eda943044d6d0cbdbe0f67
+      urlPrefix?: string;
     } = {}
   ) {
     const tokenDecoded = JWT.decode(token);
 
-    if (!tokenDecoded || typeof tokenDecoded === 'string') {
-      throw Error('token could not be decoded');
+    if (!tokenDecoded || typeof tokenDecoded === "string") {
+      throw Error("token could not be decoded");
     }
 
-    if (!('instance' in tokenDecoded && 'product' in tokenDecoded)) {
-      throw Error('user management token: wrong shape');
+    if (!("instance" in tokenDecoded && "product" in tokenDecoded)) {
+      throw Error("user management token: wrong shape");
     }
-    
+
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, options.urlPrefix || urlPrefix);
@@ -64,19 +56,15 @@ class UserManagementService {
       this.refresh,
       this.getAccessToken,
       jwtSecret,
-<<<<<<< HEAD
       options.tokenValidity || tokenValidityDefault,
       options.jwtAlgorithm
-=======
-      options.tokenValidity || tokenValidityDefault
->>>>>>> d5276d08723def6385eda943044d6d0cbdbe0f67
     );
   }
 
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication,
-    instance: {uuid: string} = this.instance,
+    instance: { uuid: string } = this.instance
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const r = await this.request<
       T.AuthenticationOut & { refreshToken: string }
@@ -158,7 +146,10 @@ class UserManagementService {
   oAuthCallbackWithAuthentication = async (
     code: string,
     oAuthParams: T.OAuthParams,
-    { isSignup, instance = this.instance }: Partial<T.OAuthCallbackWithAuthenticationOptions>
+    {
+      isSignup,
+      instance = this.instance,
+    }: Partial<T.OAuthCallbackWithAuthenticationOptions>
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
