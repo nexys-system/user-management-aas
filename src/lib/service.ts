@@ -94,7 +94,7 @@ class UserManagementService {
 
     // send notification that user was created
     if (this.notificationCallback) {
-      notificationCallback("signup: " + JSON.stringify(r.profile));
+      this.notificationCallback("signup: " + JSON.stringify(r.profile));
     }
 
     return {
