@@ -29,6 +29,8 @@ class UserManagementService {
   instance: { uuid: string };
   product: { id: number };
 
+  notificationCallback?: (message: string) => Promise<void>
+
   constructor(
     token: string,
     jwtSecret:
@@ -37,6 +39,7 @@ class UserManagementService {
     options: {
       tokenValidity?: number;
       urlPrefix?: string;
+      notificationCallback?: (message: string) => Promise<void> // ability to pass an object that will send a notification
     } = {}
   ) {
     const tokenDecoded = JWT.decode(token);
@@ -63,6 +66,11 @@ class UserManagementService {
       options.tokenValidity || tokenValidityDefault,
       typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined
     );
+
+    // set notification callback function
+    if (options.notificationCallback) {
+      this.notificationCallback = options.notificationCallback;
+    }
   }
 
   signup = async (
@@ -83,6 +91,11 @@ class UserManagementService {
       instance.uuid,
       r.permissions
     );
+
+    // send notification that user was created
+    if (this.notificationCallback) {
+      notificationCallback("signup: " + JSON.stringify(r.profile));
+    }
 
     return {
       ...r,
