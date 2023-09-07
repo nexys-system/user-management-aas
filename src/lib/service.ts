@@ -133,6 +133,8 @@ class UserManagementService {
 
   logoutAll = async (uuid: string) => this.request("/logout/all", { uuid });
 
+  profile = async (uuid: string) => this.request("/profile", { uuid });
+
   // oauth
   oAuthUrl = async (
     oAuthParams: T.OAuthParams,
