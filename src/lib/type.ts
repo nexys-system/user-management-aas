@@ -77,6 +77,7 @@ export interface ErrorAuthorization {
 
 export interface TokenShape {
   id: string;
+  email: string;
   instanceId: string;
   permissions: number[];
   iat: number;
