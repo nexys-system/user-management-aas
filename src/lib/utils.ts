@@ -140,7 +140,7 @@ export const authorize =
             r.profile.instance.uuid,
             r.permissions
           );
-          return { accessToken, id, instanceId, permissions };
+          return { accessToken, id, email, instanceId, permissions };
         } catch (err) {
           const status = 403;
           const body = { error: "something went wrong while refreshing token" };
@@ -148,7 +148,7 @@ export const authorize =
         }
       }
 
-      return { id, instanceId, permissions };
+      return { id, email, instanceId, permissions };
     } catch (err) {
       const status = 401;
       const body = { error: (err as Error).message };
