@@ -28,10 +28,10 @@ const refreshFunc = (token: string): Promise<RefreshOut> => {
 test("authorize", async () => {
   const jwtSecret = "mysecret";
 
-  const payload = { id, instanceId, permissions, email };
+  const payload = { id, email, instanceId, permissions };
 
   const getAccessToken = U.getAccessToken(jwtSecret, undefined);
-  const token = getAccessToken(id, instanceId, permissions);
+  const token = getAccessToken(id, email, instanceId, permissions);
 
   //const token = jwt.sign(payload, jwtSecret);
 
