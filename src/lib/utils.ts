@@ -35,9 +35,10 @@ export const request =
 
 export const getAccessToken =
   (jwtSecretOrPrivateKey: string, algorithm?: JWT.Algorithm) =>
-  (id: string, instanceId: string, permissions: number[]) => {
+  (id: string, email: string, instanceId: string, permissions: number[]) => {
     const tokenContent: Omit<T.TokenShape, "iat"> = {
       id,
+      email,
       instanceId,
       permissions,
     };
@@ -134,6 +135,7 @@ export const authorize =
 
           const accessToken = getAccessToken(
             r.profile.id,
+            r.profile.email,
             r.profile.instance.uuid,
             r.permissions
           );
