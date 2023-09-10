@@ -18,6 +18,7 @@ class UserManagementService {
   request: <A = any>(path: string, payload: any) => Promise<A>;
   getAccessToken: (
     id: string,
+    email: string,
     instanceId: string,
     permissions: number[]
   ) => string;
