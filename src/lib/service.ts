@@ -89,6 +89,7 @@ class UserManagementService {
 
     const accessToken = this.getAccessToken(
       r.profile.id,
+      r.profile.email,
       instance.uuid,
       r.permissions
     );
@@ -115,6 +116,7 @@ class UserManagementService {
 
     const accessToken = this.getAccessToken(
       r.profile.id,
+      r.profile.email,
       r.profile.instance.uuid,
       r.permissions
     );
@@ -135,6 +137,7 @@ class UserManagementService {
 
     const accessToken = this.getAccessToken(
       r.profile.id,
+      r.profile.email,
       r.profile.instance.uuid,
       r.permissions
     );
