@@ -81,6 +81,7 @@ export const authorize =
     refresh: (refreshtoken: string) => Promise<T.RefreshOut>,
     getAccessToken: (
       id: string,
+      email: string,
       instanceId: string,
       permissions: number[]
     ) => string,
@@ -111,7 +112,7 @@ export const authorize =
         return { status, body };
       }
 
-      const { id, instanceId, permissions, iat } = verified;
+      const { id, email, instanceId, permissions, iat } = verified;
 
       if (!iat || typeof iat !== "number") {
         const status = 401;
