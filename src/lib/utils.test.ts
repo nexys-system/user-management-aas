@@ -70,7 +70,7 @@ test("authorize asymetric", async () => {
   );
   const authorizeResult = await authorizeFunc(token);
 
-  const expectedPayload = { id, instanceId, permissions };
+  const expectedPayload = { id, email, instanceId, permissions };
   expect(authorizeResult).toEqual(expectedPayload);
 });
 
