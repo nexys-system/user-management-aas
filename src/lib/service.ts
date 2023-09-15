@@ -15,7 +15,8 @@ const authenticationServiceToType = (
 };
 
 class UserManagementService {
-  request: <A = any>(path: string, payload: any) => Promise<A>;
+  request: <A = any>(path: string, payload?: any) => Promise<A>;
+
   getAccessToken: (
     id: string,
     instanceId: string,
@@ -70,7 +71,7 @@ class UserManagementService {
     authentication: T.Authentication,
     instance: { uuid: string } = this.instance
   ): Promise<T.AuthenticationOut & T.Tokens> => {
-    const r = await this.request<
+    const response = await this.request<
       T.AuthenticationOut & { refreshToken: string }
     >("/signup", {
       profile,
@@ -79,13 +80,13 @@ class UserManagementService {
     });
 
     const accessToken = this.getAccessToken(
-      r.profile.id,
+      response.profile.id,
       instance.uuid,
-      r.permissions
+      response.permissions
     );
 
     return {
-      ...r,
+      ...response,
       accessToken,
     };
   };
@@ -95,24 +96,18 @@ class UserManagementService {
     email?: string,
     ip?: string
   ): Promise<T.AuthenticationOut & T.Tokens> => {
-    const r = await this.request<
+    const { profile, permissions, locale, refreshToken } = await this.request<
       T.AuthenticationOut & { refreshToken: string }
     >("/authenticate", { authentication, email, ip });
 
     const accessToken = this.getAccessToken(
-      r.profile.id,
-      r.profile.instance.uuid,
-      r.permissions
+      profile.id,
+      profile.instance.uuid,
+      permissions
     );
 
-    return { ...r, accessToken };
+    return { profile, permissions, locale, refreshToken, accessToken };
   };
-
-  statusChange = async (uuid: string, status: T.UserStatus) =>
-    this.request<{ response: boolean }>("/status/change", {
-      uuid,
-      status,
-    });
 
   refresh = async (refreshToken: string): Promise<T.RefreshOut> => {
     const r = await this.request<T.AuthenticationOut>("/refresh", {
@@ -132,6 +127,12 @@ class UserManagementService {
     this.request("/logout", { uuid, refreshToken });
 
   logoutAll = async (uuid: string) => this.request("/logout/all", { uuid });
+
+  statusChange = async (uuid: string, status: T.UserStatus) =>
+    this.request<{ response: boolean }>("/status/change", {
+      uuid,
+      status,
+    });
 
   // oauth
   oAuthUrl = async (
@@ -187,6 +188,26 @@ class UserManagementService {
       throw Error((err as Error).message);
     }
   };
+
+  //
+  profile = async (uuid: string) => this.request("/profile", { uuid });
+
+  changePassword = async (
+    uuid: string,
+    newPassword: string,
+    oldPassword?: string
+  ) =>
+    this.request("/profile/password/change", {
+      uuid,
+      newPassword,
+      oldPassword,
+    });
+
+  changeEmail = async (uuid: string, email: string) =>
+    this.request("/profile/email/change", {
+      uuid,
+      email,
+    });
 }
 
 export default UserManagementService;

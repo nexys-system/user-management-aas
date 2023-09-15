@@ -28,8 +28,6 @@ export const request =
       throw Error(t);
     }
 
-    console.log(r.status);
-
     return r.json();
   };
 
