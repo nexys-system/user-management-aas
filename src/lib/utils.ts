@@ -33,9 +33,10 @@ export const request =
 
 export const getAccessToken =
   (jwtSecretOrPrivateKey: string, algorithm?: JWT.Algorithm) =>
-  (id: string, instanceId: string, permissions: number[]) => {
+  (id: string, email: string, instanceId: string, permissions: number[]) => {
     const tokenContent: Omit<T.TokenShape, "iat"> = {
       id,
+      email,
       instanceId,
       permissions,
     };
@@ -78,6 +79,7 @@ export const authorize =
     refresh: (refreshtoken: string) => Promise<T.RefreshOut>,
     getAccessToken: (
       id: string,
+      email: string,
       instanceId: string,
       permissions: number[]
     ) => string,
@@ -108,7 +110,7 @@ export const authorize =
         return { status, body };
       }
 
-      const { id, instanceId, permissions, iat } = verified;
+      const { id, email, instanceId, permissions, iat } = verified;
 
       if (!iat || typeof iat !== "number") {
         const status = 401;
@@ -132,10 +134,11 @@ export const authorize =
 
           const accessToken = getAccessToken(
             r.profile.id,
+            r.profile.email,
             r.profile.instance.uuid,
             r.permissions
           );
-          return { accessToken, id, instanceId, permissions };
+          return { accessToken, id, email, instanceId, permissions };
         } catch (err) {
           const status = 403;
           const body = { error: "something went wrong while refreshing token" };
@@ -143,7 +146,7 @@ export const authorize =
         }
       }
 
-      return { id, instanceId, permissions };
+      return { id, email, instanceId, permissions };
     } catch (err) {
       const status = 401;
       const body = { error: (err as Error).message };

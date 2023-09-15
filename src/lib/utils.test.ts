@@ -4,13 +4,14 @@ import { RefreshOut } from "./type";
 import * as U from "./utils";
 
 const id = "123";
+const email = "j@b";
 const instanceId = "instanceid";
 const profile = {
+  id,
+  email,
+  instance: { uuid: instanceId },
   firstName: "j",
   lastName: "b",
-  email: "j@b",
-  id,
-  instance: { uuid: instanceId },
 };
 const locale = { country: "US", lang: "en" };
 const permissions = [1];
@@ -27,10 +28,10 @@ const refreshFunc = (token: string): Promise<RefreshOut> => {
 test("authorize", async () => {
   const jwtSecret = "mysecret";
 
-  const payload = { id, instanceId, permissions };
+  const payload = { id, email, instanceId, permissions };
 
   const getAccessToken = U.getAccessToken(jwtSecret, undefined);
-  const token = getAccessToken(id, instanceId, permissions);
+  const token = getAccessToken(id, email, instanceId, permissions);
 
   //const token = jwt.sign(payload, jwtSecret);
 
@@ -58,7 +59,7 @@ test("authorize asymetric", async () => {
   // end generate public/private
 
   const getAccessToken = U.getAccessToken(ePrivateKey as string, algorithm);
-  const token = getAccessToken(id, instanceId, permissions);
+  const token = getAccessToken(id, email, instanceId, permissions);
 
   const authorizeFunc = U.authorize(
     refreshFunc,
@@ -69,7 +70,7 @@ test("authorize asymetric", async () => {
   );
   const authorizeResult = await authorizeFunc(token);
 
-  const expectedPayload = { id, instanceId, permissions };
+  const expectedPayload = { id, email, instanceId, permissions };
   expect(authorizeResult).toEqual(expectedPayload);
 });
 
