@@ -217,12 +217,12 @@ class UserManagementService {
 
   changePassword = async (
     uuid: string,
-    newPassword: string,
+    password: string,
     oldPassword?: string
   ) =>
     this.request("/profile/password/change", {
       uuid,
-      newPassword,
+      password,
       oldPassword,
     });
 
