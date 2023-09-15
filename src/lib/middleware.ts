@@ -21,14 +21,20 @@ export const isAuthenticatedNonMiddleware =
       return;
     }
 
-    const { accessToken: newAccessToken, id, permissions, instanceId } = r;
+    const {
+      accessToken: newAccessToken,
+      id,
+      permissions,
+      instanceId,
+      email,
+    } = r;
 
     if (newAccessToken) {
       //const accessToken = userManagement.getAccessToken(id);
       ctx.cookies.set(Constants.cookieValues.accessToken, newAccessToken);
     }
 
-    ctx.state = { id, instanceId, permissions };
+    ctx.state = { id, email, instanceId, permissions };
   };
 
 export const isAuthenticated =
@@ -36,7 +42,7 @@ export const isAuthenticated =
   async (ctx: Koa.Context, next: Koa.Next) => {
     await isAuthenticatedNonMiddleware(userManagement)(ctx);
 
-    if ('id' in ctx.state && 'instanceId' in ctx.state) {    
+    if ("id" in ctx.state && "instanceId" in ctx.state) {
       return await next();
     }
 
