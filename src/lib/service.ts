@@ -153,6 +153,11 @@ class UserManagementService {
 
   profile = async (uuid: string) => this.request("/profile", { uuid });
 
+  profileUpdate = async (
+    uuid: string,
+    profile: Pick<T.Profile, "firstName" | "lastName">
+  ) => this.request("/profile/update", { uuid, profile });
+
   // oauth
   oAuthUrl = async (
     oAuthParams: T.OAuthParams,
