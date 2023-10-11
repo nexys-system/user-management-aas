@@ -3,17 +3,6 @@ import { urlPrefix, tokenValidityDefault } from "./constants";
 import * as T from "./type";
 import * as U from "./utils";
 
-const authenticationServiceToType = (
-  service: T.AuthenticationServices
-): T.AuthenticationType => {
-  switch (service) {
-    case "github":
-      return T.AuthenticationType.github;
-    default:
-      return T.AuthenticationType.google;
-  }
-};
-
 class UserManagementService {
   request: <A = any>(path: string, payload?: any) => Promise<A>;
 
@@ -185,7 +174,7 @@ class UserManagementService {
       oAuthParams
     );
 
-    const type = authenticationServiceToType(oAuthParams.service);
+    const type = U.authenticationServiceToType(oAuthParams.service);
 
     try {
       if (isSignup) {
