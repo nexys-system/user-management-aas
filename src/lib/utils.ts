@@ -156,3 +156,14 @@ export const authorize =
 
 export const isAuthService = (s: string): s is T.AuthenticationServices =>
   ["google", "github", "zoho", "swissid", "microsoft"].includes(s);
+
+export const authenticationServiceToType = (
+  service: T.AuthenticationServices
+): T.AuthenticationType => {
+  switch (service) {
+    case "github":
+      return T.AuthenticationType.github;
+    default:
+      return T.AuthenticationType.google;
+  }
+};
