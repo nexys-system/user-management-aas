@@ -231,6 +231,17 @@ class UserManagementService {
       uuid,
       email,
     });
+
+  // CRUD
+  list = async () => this.request("/list");
+
+  detail = async (uuid: string) => this.request("/detail", { uuid });
+
+  update = async (
+    data: Partial<Pick<T.Profile, "email" | "firstName" | "lastName">>
+  ) => this.request("/update", data);
+
+  deleteByUuid = async (uuid: string) => this.request("/delete", { uuid });
 }
 
 export default UserManagementService;
