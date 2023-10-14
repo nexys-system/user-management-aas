@@ -220,6 +220,42 @@ class UserManagementService {
       uuid,
       email,
     });
+
+  // CRUD
+  list = async () => this.request("/admin/list");
+
+  detail = async (uuid: string) => this.request("/admin/detail", { uuid });
+
+  insert = async (
+    profile: T.Profile,
+    locale?: T.Locale,
+    status?: T.UserStatus
+  ): Promise<{ uuid: string }> =>
+    this.request("/admin/insert", { profile, locale, status });
+
+  update = async (
+    uuid: string,
+    data: Partial<T.UserCore> & { locale?: T.Locale }
+  ) => this.request("/admin/update", { uuid, data });
+
+  deleteById = async (uuid: string): Promise<boolean> =>
+    this.request("/admin/delete", { uuid });
+
+  permissionList = async () => this.request("/admin/permission/list");
+
+  userPermissionList = async (
+    uuid: string
+  ): Promise<
+    { permission: T.Permission; userPermission: { uuid: string } }[]
+  > => this.request("/admin/permission/user/list", { uuid });
+
+  userPermissionToggle = async (
+    uuid: string,
+    permission: T.Permission
+  ): Promise<{ success: true; deleted: 1 } | { uuid: string }> =>
+    this.request("/admin/permission/user/toggle", { uuid, permission });
+
+  deleteByUuid = async (uuid: string) => this.request("/delete", { uuid });
 }
 
 export default UserManagementService;
