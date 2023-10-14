@@ -4,6 +4,7 @@ import Koa from "koa";
 import * as Constants from "./constants";
 import * as Utils from "./utils";
 import UserManagementService from "./service";
+import { Permission } from "./type";
 
 export const isAuthenticatedNonMiddleware =
   (userManagement: UserManagementService) => async (ctx: Koa.Context) => {
@@ -47,4 +48,25 @@ export const isAuthenticated =
     }
 
     return;
+  };
+
+export const hasPermission =
+  (permission: Permission) => async (ctx: Koa.Context, next: Koa.Next) => {
+    const { permissions } = ctx.state;
+
+    if (
+      !permissions ||
+      !Array.isArray(permissions) ||
+      !permissions.includes(permission)
+    ) {
+      ctx.status = 403;
+      ctx.body = {
+        error: "Forbidden",
+        message:
+          "You do not have the required permission to access this resource.",
+      };
+      return;
+    }
+
+    return await next();
   };
