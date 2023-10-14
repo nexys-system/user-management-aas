@@ -50,23 +50,22 @@ export const isAuthenticated =
     return;
   };
 
-export const hasPermission =
-  (permission: Permission) => async (ctx: Koa.Context, next: Koa.Next) => {
-    const { permissions } = ctx.state;
+export const hasPermission = (permission: Permission) => async (ctx: any) => {
+  const { permissions } = ctx.state;
 
-    if (
-      !permissions ||
-      !Array.isArray(permissions) ||
-      !permissions.includes(permission)
-    ) {
-      ctx.status = 403;
-      ctx.body = {
-        error: "Forbidden",
-        message:
-          "You do not have the required permission to access this resource.",
-      };
-      return;
-    }
+  //  console.log("in", permission, permissions);
 
-    return await next();
-  };
+  if (
+    !permissions ||
+    !Array.isArray(permissions) ||
+    !permissions.includes(permission)
+  ) {
+    ctx.status = 403;
+    ctx.body = {
+      error: "Forbidden",
+      message:
+        "You do not have the required permission to access this resource.",
+    };
+    return;
+  }
+};
