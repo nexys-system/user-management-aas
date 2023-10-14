@@ -1,7 +1,7 @@
 import JWT from "jsonwebtoken";
-import { urlPrefix, tokenValidityDefault } from "./constants";
-import * as T from "./type";
-import * as U from "./utils";
+import { urlPrefix, tokenValidityDefault } from "./constants.js";
+import * as T from "./type.js";
+import * as U from "./utils.js";
 
 class UserManagementService {
   request: <A = any>(path: string, payload?: any) => Promise<A>;
