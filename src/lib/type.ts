@@ -22,11 +22,8 @@ export interface Authentication {
   type: AuthenticationType;
 }
 
-export interface Profile {
+export interface Profile extends UserCore {
   id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
   instance: { uuid: string };
 }
 
@@ -67,7 +64,7 @@ export interface OAuthParams {
 
 export interface OAuthCallbackWithAuthenticationOptions {
   isSignup: boolean;
-  instance: {uuid: string};
+  instance: { uuid: string };
 }
 
 export enum UserStatus {
@@ -87,4 +84,15 @@ export interface TokenShape {
   instanceId: string;
   permissions: number[];
   iat: number;
+}
+
+export interface UserCore {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface User extends Partial<UserCore> {
+  uuid: string;
+  locale: Locale;
 }
