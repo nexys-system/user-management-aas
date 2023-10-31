@@ -40,7 +40,7 @@ export const getAccessToken =
     tokenValidity: number
   ) =>
   (id: string, email: string, instanceId: string, permissions: number[]) => {
-    const exp = new Date().getTime() + tokenValidity;
+    const exp = Math.floor(new Date().getTime() / 1000 + tokenValidity);
 
     const tokenContent: Omit<T.TokenShape, "iat"> = {
       id,

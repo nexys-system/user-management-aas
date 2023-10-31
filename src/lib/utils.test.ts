@@ -32,7 +32,7 @@ test("authorize", async () => {
 
   const getAccessToken = U.getAccessToken(
     { jwtSecretOrPrivateKey: jwtSecret },
-    15 * 60 * 1000
+    15 * 60
   );
   const token = getAccessToken(id, email, instanceId, permissions);
 
