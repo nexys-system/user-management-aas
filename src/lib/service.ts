@@ -46,10 +46,20 @@ class UserManagementService {
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, options.urlPrefix || urlPrefix);
+
+    const jwtSecretOrPrivateKey =
+      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey;
+    const algorithm: JWT.Algorithm | undefined =
+      typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined;
+
     this.getAccessToken = U.getAccessToken(
-      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey,
-      typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined
+      {
+        jwtSecretOrPrivateKey,
+        algorithm,
+      },
+      options.tokenValidity || tokenValidityDefault
     );
+
     this.authorize = U.authorize(
       this.refresh,
       this.getAccessToken,

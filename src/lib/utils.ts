@@ -32,13 +32,22 @@ export const request =
   };
 
 export const getAccessToken =
-  (jwtSecretOrPrivateKey: string, algorithm?: JWT.Algorithm) =>
+  (
+    {
+      jwtSecretOrPrivateKey,
+      algorithm,
+    }: { jwtSecretOrPrivateKey: string; algorithm?: JWT.Algorithm },
+    tokenValidity: number
+  ) =>
   (id: string, email: string, instanceId: string, permissions: number[]) => {
+    const exp = new Date().getTime() + tokenValidity;
+
     const tokenContent: Omit<T.TokenShape, "iat"> = {
       id,
       email,
       instanceId,
       permissions,
+      exp,
     };
 
     const options: JWT.SignOptions = {};

@@ -48,7 +48,7 @@ export type RefreshOut = AuthenticationOut & Pick<Tokens, "accessToken">;
 
 export type AuthorizeOut =
   | ErrorAuthorization
-  | (Omit<TokenShape, "iat"> & { accessToken?: string });
+  | (Omit<TokenShape, "iat" | "exp"> & { accessToken?: string });
 
 export interface Tokens {
   accessToken: string;
@@ -84,6 +84,7 @@ export interface TokenShape {
   instanceId: string;
   permissions: number[];
   iat: number;
+  exp: number;
 }
 
 export interface UserCore {

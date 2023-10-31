@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { generateKeyPairSync } from "crypto";
 import { RefreshOut } from "./type";
 import * as U from "./utils";
+import { tokenValidity } from "../config";
 
 const id = "123";
 const email = "j@b";
@@ -30,7 +31,10 @@ test("authorize", async () => {
 
   const payload = { id, email, instanceId, permissions };
 
-  const getAccessToken = U.getAccessToken(jwtSecret, undefined);
+  const getAccessToken = U.getAccessToken(
+    { jwtSecretOrPrivateKey: jwtSecret },
+    tokenValidity
+  );
   const token = getAccessToken(id, email, instanceId, permissions);
 
   //const token = jwt.sign(payload, jwtSecret);
@@ -55,10 +59,16 @@ test("authorize asymetric", async () => {
 
   // to string (pem format)
   const ePublicKey = publicKey.export({ type: "spki", format: "pem" });
-  const ePrivateKey = privateKey.export({ type: "pkcs8", format: "pem" });
+  const ePrivateKey = privateKey.export({
+    type: "pkcs8",
+    format: "pem",
+  }) as string;
   // end generate public/private
 
-  const getAccessToken = U.getAccessToken(ePrivateKey as string, algorithm);
+  const getAccessToken = U.getAccessToken(
+    { jwtSecretOrPrivateKey: ePrivateKey as string, algorithm },
+    tokenValidity
+  );
   const token = getAccessToken(id, email, instanceId, permissions);
 
   const authorizeFunc = U.authorize(
