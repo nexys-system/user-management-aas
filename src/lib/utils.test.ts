@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { generateKeyPairSync } from "crypto";
 import { RefreshOut } from "./type";
 import * as U from "./utils";
-import { tokenValidity } from "../config";
 
 const id = "123";
 const email = "j@b";
@@ -33,7 +32,7 @@ test("authorize", async () => {
 
   const getAccessToken = U.getAccessToken(
     { jwtSecretOrPrivateKey: jwtSecret },
-    tokenValidity
+    15 * 60 * 1000
   );
   const token = getAccessToken(id, email, instanceId, permissions);
 
@@ -67,7 +66,7 @@ test("authorize asymetric", async () => {
 
   const getAccessToken = U.getAccessToken(
     { jwtSecretOrPrivateKey: ePrivateKey as string, algorithm },
-    tokenValidity
+    15 * 60
   );
   const token = getAccessToken(id, email, instanceId, permissions);
 
