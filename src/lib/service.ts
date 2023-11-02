@@ -21,7 +21,11 @@ class UserManagementService {
   product: { id: number };
 
   notificationCallback?: (message: string) => Promise<void>;
-  emailCallback?: (to: string, message: string) => Promise<void>;
+  emailCallback?: (
+    subject: string,
+    message: string,
+    to: string
+  ) => Promise<void>;
 
   constructor(
     token: string,
@@ -84,7 +88,10 @@ class UserManagementService {
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication,
     instance: { uuid: string } = this.instance,
-    emailMessage?: (activationToken: string) => string
+    emailMessage?: {
+      subject: string;
+      body: (activationToken: string) => string;
+    }
   ): Promise<T.AuthenticationOut & T.Tokens & { activationToken: string }> => {
     const response = await this.request<
       T.AuthenticationOut & { refreshToken: string; activationToken: string }
@@ -108,8 +115,9 @@ class UserManagementService {
 
     if (this.emailCallback && emailMessage) {
       this.emailCallback(
-        response.profile.email,
-        emailMessage(response.activationToken)
+        emailMessage.subject,
+        emailMessage.body(response.activationToken),
+        response.profile.email
       );
     }
 
