@@ -21,7 +21,7 @@ class UserManagementService {
   product: { id: number };
 
   notificationCallback?: (message: string) => Promise<void>;
-  emailCallback?: (message: string) => Promise<void>;
+  emailCallback?: (to: string, message: string) => Promise<void>;
 
   constructor(
     token: string,
@@ -107,7 +107,10 @@ class UserManagementService {
     }
 
     if (this.emailCallback && emailMessage) {
-      this.emailCallback(emailMessage(response.activationToken));
+      this.emailCallback(
+        response.profile.email,
+        emailMessage(response.activationToken)
+      );
     }
 
     return {
