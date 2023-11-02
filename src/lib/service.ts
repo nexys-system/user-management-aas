@@ -21,6 +21,7 @@ class UserManagementService {
   product: { id: number };
 
   notificationCallback?: (message: string) => Promise<void>;
+  emailCallback?: (message: string) => Promise<void>;
 
   constructor(
     token: string,
@@ -31,6 +32,7 @@ class UserManagementService {
       tokenValidity?: number;
       urlPrefix?: string;
       notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
+      emailCallback?: (meaage: string) => Promise<void>;
     } = {}
   ) {
     const tokenDecoded = JWT.decode(token);
@@ -72,15 +74,20 @@ class UserManagementService {
     if (options.notificationCallback) {
       this.notificationCallback = options.notificationCallback;
     }
+
+    if (options.emailCallback) {
+      this.emailCallback = options.emailCallback;
+    }
   }
 
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication,
-    instance: { uuid: string } = this.instance
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
+    instance: { uuid: string } = this.instance,
+    emailMessage?: (activationToken: string) => string
+  ): Promise<T.AuthenticationOut & T.Tokens & { activationToken: string }> => {
     const response = await this.request<
-      T.AuthenticationOut & { refreshToken: string }
+      T.AuthenticationOut & { refreshToken: string; activationToken: string }
     >("/signup", {
       profile,
       instance,
@@ -97,6 +104,10 @@ class UserManagementService {
     // send notification that user was created
     if (this.notificationCallback) {
       this.notificationCallback("signup: " + JSON.stringify(response.profile));
+    }
+
+    if (this.emailCallback && emailMessage) {
+      this.emailCallback(emailMessage(response.activationToken));
     }
 
     return {
