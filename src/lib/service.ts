@@ -21,11 +21,7 @@ class UserManagementService {
   product: { id: number };
 
   notificationCallback?: (message: string) => Promise<void>;
-  emailCallback?: (
-    subject: string,
-    message: string,
-    to: string
-  ) => Promise<void>;
+  emailCallback?: (subject: string, body: string, to: string) => Promise<void>;
 
   constructor(
     token: string,
@@ -36,7 +32,11 @@ class UserManagementService {
       tokenValidity?: number;
       urlPrefix?: string;
       notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
-      emailCallback?: (meaage: string) => Promise<void>;
+      emailCallback?: (
+        subject: string,
+        body: string,
+        to: string
+      ) => Promise<void>;
     } = {}
   ) {
     const tokenDecoded = JWT.decode(token);
