@@ -2,7 +2,7 @@ import JWT from "jsonwebtoken";
 import { urlPrefix, tokenValidityDefault } from "./constants.js";
 import * as T from "./type.js";
 import * as U from "./utils.js";
-import { createActionPayload } from "./action-payload.js";
+import { createActionPayload, decryptPayload } from "./action-payload.js";
 
 export interface UserManagementOptions {
   secretKey?: string; // this secretkey will be used to create encrypted strings that are sent to the user typically for account activation or password reset, if not given it will be generated automatically
@@ -162,14 +162,44 @@ class UserManagementService {
     return await this.request("/user-by-email", { email });
   };
 
-  forgotPassword = async (email: string) => {
+  /**
+   * Initiates the password recovery process for users by accepting their registered email. If the email is found in the system, a password reset token is sent to it.
+   * @returns token
+   */
+  forgotPassword = async (
+    email: string,
+    emailMessage?: {
+      subject: string;
+      body: (token: string) => string;
+    }
+  ) => {
     const { profile } = await this.userByEmail(email);
-    return createActionPayload(
+    const token = createActionPayload(
       profile.id,
       { uuid: profile.instance.uuid },
       "RESET_PASSWORD",
       this.secretKey
     );
+
+    // send email with token to user
+    this.emailCallback &&
+      emailMessage &&
+      this.emailCallback(
+        emailMessage.subject,
+        emailMessage.body(token),
+        profile.email
+      );
+
+    return token;
+  };
+
+  /**
+   *  Completes the password recovery process by allowing users to set a new password using a valid reset token received via email.
+   */
+  passwordReset = async (token: string, newPassword: string) => {
+    const { id } = decryptPayload(token, this.secretKey, "RESET_PASSWORD");
+
+    return this.changePassword(id, newPassword);
   };
 
   refresh = async (refreshToken: string): Promise<T.RefreshOut> => {
