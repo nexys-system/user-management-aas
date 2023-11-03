@@ -2,6 +2,15 @@ import JWT from "jsonwebtoken";
 import { urlPrefix, tokenValidityDefault } from "./constants.js";
 import * as T from "./type.js";
 import * as U from "./utils.js";
+import { createActionPayload } from "./action-payload.js";
+
+export interface UserManagementOptions {
+  secretKey?: string; // this secretkey will be used to create encrypted strings that are sent to the user typically for account activation or password reset, if not given it will be generated automatically
+  tokenValidity?: number;
+  urlPrefix?: string;
+  notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
+  emailCallback?: (subject: string, body: string, to: string) => Promise<void>;
+}
 
 class UserManagementService {
   request: <A = any>(path: string, payload?: any) => Promise<A>;
@@ -20,6 +29,8 @@ class UserManagementService {
   instance: { uuid: string };
   product: { id: number };
 
+  secretKey: string;
+
   notificationCallback?: (message: string) => Promise<void>;
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>;
 
@@ -28,16 +39,8 @@ class UserManagementService {
     jwtSecret:
       | string
       | { publicKey: string; privateKey: string; algorithm: JWT.Algorithm },
-    options: {
-      tokenValidity?: number;
-      urlPrefix?: string;
-      notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
-      emailCallback?: (
-        subject: string,
-        body: string,
-        to: string
-      ) => Promise<void>;
-    } = {}
+
+    options: UserManagementOptions = {}
   ) {
     const tokenDecoded = JWT.decode(token);
 
@@ -57,6 +60,8 @@ class UserManagementService {
       typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey;
     const algorithm: JWT.Algorithm | undefined =
       typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined;
+
+    this.secretKey = options.secretKey || U.generateSecretKey();
 
     this.getAccessToken = U.getAccessToken(
       {
@@ -144,6 +149,27 @@ class UserManagementService {
     );
 
     return { profile, permissions, locale, refreshToken, accessToken };
+  };
+
+  userByEmail = async (
+    email: string
+  ): Promise<{
+    profile: T.Profile;
+    status: T.UserStatus;
+    locale: T.Locale;
+    UserAuthentication?: T.UserAuthentication[];
+  }> => {
+    return await this.request("/user-by-email", { email });
+  };
+
+  forgotPassword = async (email: string) => {
+    const { profile } = await this.userByEmail(email);
+    return createActionPayload(
+      profile.id,
+      { uuid: profile.instance.uuid },
+      "RESET_PASSWORD",
+      this.secretKey
+    );
   };
 
   refresh = async (refreshToken: string): Promise<T.RefreshOut> => {

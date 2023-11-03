@@ -107,3 +107,10 @@ export interface ActionPayload {
   issued: number;
   expires: number;
 }
+
+export interface UserAuthentication {
+  uuid: string;
+  value: string;
+  isEnabled: boolean;
+  type: AuthenticationType;
+}

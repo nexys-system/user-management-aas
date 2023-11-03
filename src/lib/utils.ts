@@ -1,5 +1,6 @@
 // see https://stackoverflow.com/a/74112582/1659569
 /// <reference lib="dom" />
+import crypto from "crypto";
 import JWT from "jsonwebtoken";
 import * as T from "./type";
 
@@ -176,3 +177,6 @@ export const authenticationServiceToType = (
       return T.AuthenticationType.google;
   }
 };
+
+export const generateSecretKey = (length: number = 16): string =>
+  crypto.randomBytes(length).toString("hex");
