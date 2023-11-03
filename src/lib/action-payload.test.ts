@@ -55,4 +55,21 @@ describe("Encryption and Decryption Services", () => {
     expect(decrypted.instance).toMatchObject(instance);
     expect(decrypted.action).toBe(action);
   });
+
+  test("generate token", async () => {
+    const encrypted = createActionPayload(
+      "myUuid",
+      { uuid: "instanceUuid" },
+      "RESET_PASSWORD",
+      secretKey
+    );
+    const decrypted = decryptPayload(encrypted, secretKey);
+
+    const dt = new Date().getTime();
+
+    expect(decrypted.id).toEqual("myUuid");
+    expect(decrypted.instance).toEqual({ uuid: "instanceUuid" });
+    expect(decrypted.issued).toBeLessThanOrEqual(dt);
+    expect(decrypted.expires).toBeGreaterThan(dt);
+  });
 });
