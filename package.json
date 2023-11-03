@@ -24,6 +24,7 @@
     "SDK"
   ],
   "dependencies": {
+    "@nexys/crypto": "^1.0.4",
     "@types/jsonwebtoken": "^9.0.4",
     "jsonwebtoken": "^9.0.2"
   },

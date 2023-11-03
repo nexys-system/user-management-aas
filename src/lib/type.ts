@@ -97,3 +97,13 @@ export interface User extends Partial<UserCore> {
   uuid: string;
   locale: Locale;
 }
+
+export type Action = "SET_ACTIVE" | "RESET_PASSWORD" | "CHANGE_EMAIL" | "2FA";
+
+export interface ActionPayload {
+  id: string;
+  instance: { uuid: string };
+  action: Action;
+  issued: number;
+  expires: number;
+}

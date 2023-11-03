@@ -537,6 +537,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@nexys/crypto@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@nexys/crypto/-/crypto-1.0.4.tgz#087ea960516ca3fee810fd3ea51002db22e07c3f"
+  integrity sha512-acsLzzudQyXKDQ5enym9XTpR2u1cey7qjdRjtNf58wP20SSR6h6iRuLLWy9ALIBfwURY0DUe13QY9aD2woDsGw==
+
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
