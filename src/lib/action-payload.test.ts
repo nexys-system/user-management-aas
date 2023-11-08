@@ -6,6 +6,29 @@ import {
 import { generateSecretKey } from "./utils";
 import { Action, AuthenticationOut, Locale, Permission, Profile } from "./type";
 
+test("encrypt / descrupt", () => {
+  const secretKey = generateSecretKey(); // Generate a secret key for testing
+  const id = "id";
+  const instanceUuid = "instanceUuid";
+
+  const payload = createActionPayload(
+    id,
+    { uuid: instanceUuid },
+    "RESET_PASSWORD",
+    secretKey
+  );
+
+  const {
+    id: id2,
+    expires,
+    action,
+  } = decryptPayload(payload, secretKey, "RESET_PASSWORD");
+
+  expect(expires).toBeGreaterThan(new Date().getTime());
+  expect(action).toBe("RESET_PASSWORD");
+  expect(id).toEqual(id2);
+});
+
 describe("Encryption and Decryption Services", () => {
   const secretKey = generateSecretKey(); // Generate a secret key for testing
   const uuid = "123e4567-e89b-12d3-a456-426614174000";

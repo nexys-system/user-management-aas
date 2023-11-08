@@ -166,7 +166,7 @@ class UserManagementService {
    * Initiates the password recovery process for users by accepting their registered email. If the email is found in the system, a password reset token is sent to it.
    * @returns token
    */
-  forgotPassword = async (
+  passwordForgot = async (
     email: string,
     emailMessage?: {
       subject: string;
