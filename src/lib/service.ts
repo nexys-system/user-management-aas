@@ -344,6 +344,14 @@ class UserManagementService {
     this.request("/admin/permission/user/toggle", { uuid, permission });
 
   deleteByUuid = async (uuid: string) => this.request("/delete", { uuid });
+
+  /**
+   * inserts action log, for now the only accepted attribute is url
+   * @param uuid: user uuid
+   * @param url: observed url or path
+   */
+  actionLogInsert = async (uuid: string, url: string) =>
+    this.request("/action-log/insert", { uuid, url });
 }
 
 export default UserManagementService;
