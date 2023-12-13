@@ -334,7 +334,11 @@ class UserManagementService {
   userPermissionList = async (
     uuid: string
   ): Promise<
-    { permission: T.Permission; userPermission: { uuid: string }; logDateAdded: string; }[]
+    {
+      permission: T.Permission;
+      userPermission: { uuid: string };
+      logDateAdded: string;
+    }[]
   > => this.request("/admin/permission/user/list", { uuid });
 
   userPermissionToggle = async (
@@ -346,12 +350,19 @@ class UserManagementService {
   deleteByUuid = async (uuid: string) => this.request("/delete", { uuid });
 
   /**
-   * inserts action log, for now the only accepted attribute is url
-   * @param uuid: user uuid
-   * @param url: observed url or path
+   * Inserts an action log entry. This function is used to record user actions in the system.
+   * It accepts multiple attributes, including a UUID for the user, a URL or path that was observed,
+   * an action that was performed, and an additional value related to the action.
+   *
+   * @param uuid: The UUID of the user.
+   * @param url: (Optional) The URL or path that was observed during the action.
+   * @param action: (Optional) A string representing the action performed by the user.
+   * @param value: (Optional) Additional value or information related to the action.
    */
-  actionLogInsert = async (uuid: string, url: string) =>
-    this.request("/action-log/insert", { uuid, url });
+  actionLogInsert = async (
+    uuid: string,
+    { url, action, value }: { url?: string; action?: string; value?: string }
+  ) => this.request("/action-log/insert", { uuid, url, action, value });
 }
 
 export default UserManagementService;
