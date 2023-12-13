@@ -6,10 +6,10 @@ import { createActionPayload, decryptPayload } from "./action-payload.js";
 
 export interface UserManagementOptions {
   secretKey?: string; // this secretkey will be used to create encrypted strings that are sent to the user typically for account activation or password reset, if not given it will be generated automatically
-  tokenValidity?: number;
-  urlPrefix?: string;
+  tokenValidity?: number; // Number of seconds the JSON Web Token (JWT) is valid for.
+  urlPrefix?: string;  // Base URL to be prefixed to the paths 
   notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
-  emailCallback?: (subject: string, body: string, to: string) => Promise<void>;
+  emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
 class UserManagementService {
