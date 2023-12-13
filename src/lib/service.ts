@@ -334,7 +334,7 @@ class UserManagementService {
   userPermissionList = async (
     uuid: string
   ): Promise<
-    { permission: T.Permission; userPermission: { uuid: string } }[]
+    { permission: T.Permission; userPermission: { uuid: string }; logDateAdded: string; }[]
   > => this.request("/admin/permission/user/list", { uuid });
 
   userPermissionToggle = async (
