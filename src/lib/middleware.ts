@@ -4,7 +4,7 @@ import Koa from "koa";
 import * as Constants from "./constants";
 import * as Utils from "./utils";
 import UserManagementService from "./service";
-import { Permission } from "./type";
+import { StateShape, Permission } from "./type";
 
 export const isAuthenticatedNonMiddleware =
   (userManagement: UserManagementService) => async (ctx: Koa.Context) => {
@@ -35,7 +35,9 @@ export const isAuthenticatedNonMiddleware =
       ctx.cookies.set(Constants.cookieValues.accessToken, newAccessToken);
     }
 
-    ctx.state = { id, email, instanceId, permissions };
+    const ctxState: StateShape = { id, email, instanceId, permissions };
+
+    ctx.state = ctxState;
   };
 
 export const isAuthenticated =

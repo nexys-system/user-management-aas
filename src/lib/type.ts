@@ -114,3 +114,8 @@ export interface UserAuthentication {
   isEnabled: boolean;
   type: AuthenticationType;
 }
+
+export type StateShape = Pick<
+  TokenShape,
+  "id" | "email" | "instanceId" | "permissions"
+>;
