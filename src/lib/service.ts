@@ -491,11 +491,6 @@ class UserManagementService {
    *                                  or rejects in case of any errors during file retrieval or conversion.
    */
   fileServe = async (uuid: string): Promise<ArrayBuffer> => {
-    const headers = {
-      Authorization: "Bearer " + this.token,
-      "content-type": "application/json",
-    };
-
     const response = await U.requestToResponse(
       this.token,
       urlPrefix + "/file/serve",
