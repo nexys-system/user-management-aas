@@ -7,7 +7,7 @@ import { createActionPayload, decryptPayload } from "./action-payload.js";
 export interface UserManagementOptions {
   secretKey?: string; // this secretkey will be used to create encrypted strings that are sent to the user typically for account activation or password reset, if not given it will be generated automatically
   tokenValidity?: number; // Number of seconds the JSON Web Token (JWT) is valid for.
-  urlPrefix?: string;  // Base URL to be prefixed to the paths 
+  urlPrefix?: string; // Base URL to be prefixed to the paths
   notificationCallback?: (message: string) => Promise<void>; // ability to pass an object that will send a notification
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
@@ -417,6 +417,63 @@ class UserManagementService {
     uuid: string;
   }): Promise<{ success: boolean; updated: number }> =>
     this.request("/key-value/delete", data);
+
+  /**
+   * Retrieves a list of files from the backend.
+   *
+   * This function makes an HTTP request to the "/file/list" endpoint.
+   * It can be used to fetch a list of files, optionally filtered based on the 'user' object.
+   * If a 'user' object with a UUID is provided in the filters, it returns files associated
+   * with that specific user. Otherwise, it returns all files.
+   *
+   * @param {Object} filters - Optional filters to refine the file list. Can include a
+   *                           'user' object with a UUID to fetch files for a specific user.
+   * @returns {Promise<Array>} A promise resolving to an array of file objects, each including
+   *                           UUID, filename, content type, size, and the date added.
+   */
+  fileList = (filters: {
+    user?: { uuid: string };
+  }): Promise<
+    {
+      uuid: string;
+      filename: string;
+      contentType?: string;
+      size?: number;
+      logDateAdded: string;
+    }[]
+  > => this.request("/file/list", filters);
+
+  /**
+   * Inserts a new file into the backend.
+   *
+   * This function sends a POST request to the "/file/insert" endpoint.
+   * It is used to add a new file with a 'filename' and optional 'fileContent'.
+   * A 'user' object with a UUID can also be provided to associate the file with a specific user.
+   *
+   * @param {Object} data - Data for the new file. Must contain 'filename'.
+   *                        Optionally, 'fileContent' and a 'user' object with a UUID can be included.
+   * @returns {Promise<Object>} A promise resolving to an object containing the UUID of the newly added file.
+   */
+  fileInsert = (data: {
+    filename: string;
+    fileContent?: string;
+    user?: { uuid: string };
+  }): Promise<{ uuid: string }> => this.request("/file/insert", data);
+
+  /**
+   * Deletes a specific file from the backend.
+   *
+   * This function sends a request to the "/file/delete" endpoint to remove a file,
+   * identified by its UUID. It is used to delete files from the backend storage.
+   *
+   * @param {Object} data - The object containing the 'uuid' of the file to be deleted.
+   * @returns {Promise<Object>} A promise resolving to an object indicating the success
+   *                             of the operation and the number of records updated.
+   */
+  fileDelete = (data: {
+    uuid: string;
+  }): Promise<{ success: boolean; updated: number }> =>
+    this.request("/file/delete", data);
 }
 
 export default UserManagementService;
