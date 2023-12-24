@@ -6,30 +6,37 @@ import * as T from "./type";
 
 export const jwtAlgorithmDefault: JWT.Algorithm = "RS256";
 
+export const requestToResponse = async (
+  token: string,
+  url: string,
+  payload: any
+): Promise<Response> => {
+  const body = JSON.stringify(payload);
+  const headers = {
+    Authorization: "Bearer " + token,
+    "content-type": "application/json",
+  };
+
+  return fetch(url, {
+    method: "POST",
+    body,
+    headers,
+  });
+};
+
 export const request =
   (token: string, urlPrefix: string) =>
   async <A = any>(path: string, payload: any): Promise<A> => {
-    const body = JSON.stringify(payload);
-    const headers = {
-      Authorization: "Bearer " + token,
-      "content-type": "application/json",
-    };
-
     const url = urlPrefix + path;
+    const response = await requestToResponse(token, url, payload);
 
-    const r = await fetch(url, {
-      method: "POST",
-      body,
-      headers,
-    });
-
-    if (r.status !== 200) {
-      const t = await r.text();
+    if (response.status !== 200) {
+      const t = await response.text();
 
       throw Error(t);
     }
 
-    return r.json();
+    return response.json();
   };
 
 export const getAccessToken =

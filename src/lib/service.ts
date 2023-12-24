@@ -13,6 +13,7 @@ export interface UserManagementOptions {
 }
 
 class UserManagementService {
+  token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
 
   getAccessToken: (
@@ -55,6 +56,7 @@ class UserManagementService {
     this.instance = { uuid: tokenDecoded.instance };
     this.product = { id: tokenDecoded.product };
     this.request = U.request(token, options.urlPrefix || urlPrefix);
+    this.token = token;
 
     const jwtSecretOrPrivateKey =
       typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey;
@@ -474,6 +476,38 @@ class UserManagementService {
     uuid: string;
   }): Promise<{ success: boolean; updated: number }> =>
     this.request("/file/delete", data);
+
+  /**
+   * Serves a requested file as an ArrayBuffer.
+   *
+   * This asynchronous function is designed to handle requests for specific files identified by their UUID.
+   * When called with a UUID, it retrieves the corresponding file from the backend and serves it as an ArrayBuffer.
+   * This is particularly useful for delivering binary data, like images or documents, to the client.
+   * The function ensures that the file associated with the given UUID is retrieved and then
+   * converts it into an ArrayBuffer format, which is suitable for transmission over network protocols.
+   *
+   * @param {string} uuid - The UUID of the file to be served.
+   * @returns {Promise<ArrayBuffer>} A promise that resolves to the file data in ArrayBuffer format,
+   *                                  or rejects in case of any errors during file retrieval or conversion.
+   */
+  fileServe = async (uuid: string): Promise<ArrayBuffer> => {
+    const headers = {
+      Authorization: "Bearer " + this.token,
+      "content-type": "application/json",
+    };
+
+    const response = await U.requestToResponse(
+      this.token,
+      urlPrefix + "/file/serve",
+      { uuid }
+    );
+
+    if (response.status !== 200) {
+      throw Error(await response.text());
+    }
+
+    return response.arrayBuffer();
+  };
 }
 
 export default UserManagementService;
