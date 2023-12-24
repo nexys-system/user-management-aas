@@ -363,6 +363,60 @@ class UserManagementService {
     uuid: string,
     { url, action, value }: { url?: string; action?: string; value?: string }
   ) => this.request("/action-log/insert", { uuid, url, action, value });
+
+  /**
+   * Retrieves a list of key-value pairs from the user management backend.
+   *
+   * This function makes an HTTP request to the "/key-value/list" endpoint.
+   * It can be used to fetch key-value pairs associated with a specific user or all pairs
+   * within the instance. If a 'user' object with a UUID is provided in the filters,
+   * the function returns pairs associated with that user. Otherwise, it returns
+   * all key-value pairs in the instance.
+   *
+   * @param {Object} filters - Optional filters to refine the results. Can include a
+   *                           'user' object with a UUID to fetch pairs for a specific user.
+   * @returns {Promise} A promise resolving to the list of key-value pairs.
+   */
+  keyValueList = (filters: {
+    user?: { uuid: string };
+  }): Promise<
+    { uuid: string; key: string; value: string; logDateAdded: string }[]
+  > => this.request("/key-value/list", filters);
+
+  /**
+   * Inserts a new key-value pair into the user management backend.
+   *
+   * This function sends a POST request to the "/key-value/insert" endpoint.
+   * It is used to add a new key-value pair, either associated with a specific user
+   * (if a 'user' object with a UUID is provided) or to the instance in general.
+   * The 'key' and 'value' fields are required for creating the pair.
+   *
+   * @param {Object} data - Data for the new key-value pair. Must contain 'key' and 'value'.
+   *                        Optionally, a 'user' object with a UUID can be included to associate
+   *                        the pair with a specific user.
+   * @returns {Promise} A promise that resolves when the insertion is complete.
+   */
+  keyValueInsert = (data: {
+    key: string;
+    value: string;
+    user?: { uuid: string };
+  }): Promise<{ uuid: string }> => this.request("/key-value/insert", data);
+
+  /**
+   * Deletes a key-value pair from the user management backend.
+   *
+   * This function sends a request to the "/key-value/delete" endpoint for removing
+   * a specific key-value pair, identified by its UUID. This is used to delete pairs
+   * that are either associated with a specific user or the instance as a whole.
+   * The function requires an object containing the 'uuid' of the pair to be deleted.
+   *
+   * @param {Object} data - The object containing the 'uuid' of the key-value pair to be deleted.
+   * @returns {Promise} A promise that resolves when the deletion is completed.
+   */
+  keyValueDelete = (data: {
+    uuid: string;
+  }): Promise<{ success: boolean; updated: number }> =>
+    this.request("/key-value/delete", data);
 }
 
 export default UserManagementService;
