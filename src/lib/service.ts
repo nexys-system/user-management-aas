@@ -154,15 +154,14 @@ class UserManagementService {
   };
 
   userByEmail = async (
-    email: string
+    email: string,
+    instance?: { uuid: string }
   ): Promise<{
     profile: T.Profile;
     status: T.UserStatus;
     locale: T.Locale;
     UserAuthentication?: T.UserAuthentication[];
-  }> => {
-    return await this.request("/user-by-email", { email });
-  };
+  }> => this.request("/user-by-email", { email, instance });
 
   /**
    * Initiates the password recovery process for users by accepting their registered email. If the email is found in the system, a password reset token is sent to it.
@@ -175,7 +174,7 @@ class UserManagementService {
       body: (token: string) => string;
     }
   ) => {
-    const { profile } = await this.userByEmail(email);
+    const { profile } = await this.userByEmail(email, this.instance);
     const token = createActionPayload(
       profile.id,
       { uuid: profile.instance.uuid },
@@ -198,7 +197,10 @@ class UserManagementService {
   /**
    *  Completes the password recovery process by allowing users to set a new password using a valid reset token received via email.
    */
-  passwordReset = async (token: string, newPassword: string) => {
+  passwordReset = async (
+    token: string,
+    newPassword: string
+  ): Promise<{ success: boolean; updated: number }> => {
     const { id } = decryptPayload(token, this.secretKey, "RESET_PASSWORD");
 
     return this.changePassword(id, newPassword);
@@ -343,6 +345,12 @@ class UserManagementService {
     }[]
   > => this.request("/admin/permission/user/list", { uuid });
 
+  /**
+   * toggles (inserts/deletes) a permission for a user
+   *
+   * @param uuid: The UUID of the user.
+   * @param permission: the permission to be toggled
+   */
   userPermissionToggle = async (
     uuid: string,
     permission: T.Permission
