@@ -12,7 +12,7 @@ export interface UserManagementOptions {
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
-class UserManagementService <Permission extends T.Permission>{
+class UserManagementService <Permission extends T.Permission = T.Permission>{
   token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
 
