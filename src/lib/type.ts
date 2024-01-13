@@ -117,7 +117,7 @@ export interface UserAuthentication {
   type: AuthenticationType;
 }
 
-export type StateShape<P extends Permission = Permission> { = Pick<
+export type StateShape<P extends Permission = Permission> = Pick<
   TokenShape<P>,
   "id" | "email" | "instanceId" | "permissions"
 >;
