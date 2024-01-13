@@ -12,7 +12,7 @@ export interface UserManagementOptions {
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
-class UserManagementService {
+class UserManagementService <Permission extends T.Permission = T.Permission>{
   token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
 
@@ -99,9 +99,9 @@ class UserManagementService {
       subject: string;
       body: (activationToken: string) => string;
     }
-  ): Promise<T.AuthenticationOut & T.Tokens & { activationToken: string }> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens & { activationToken: string }> => {
     const response = await this.request<
-      T.AuthenticationOut & { refreshToken: string; activationToken: string }
+      T.AuthenticationOut<Permission> & { refreshToken: string; activationToken: string }
     >("/signup", {
       profile,
       instance,
@@ -138,9 +138,9 @@ class UserManagementService {
     authentication: T.Authentication,
     email?: string,
     ip?: string
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { profile, permissions, locale, refreshToken } = await this.request<
-      T.AuthenticationOut & { refreshToken: string }
+      T.AuthenticationOut<Permission> & { refreshToken: string }
     >("/authenticate", { authentication, email, ip });
 
     const accessToken = this.getAccessToken(
@@ -207,7 +207,7 @@ class UserManagementService {
   };
 
   refresh = async (refreshToken: string): Promise<T.RefreshOut> => {
-    const r = await this.request<T.AuthenticationOut>("/refresh", {
+    const r = await this.request<T.AuthenticationOut<Permission>>("/refresh", {
       refreshToken,
     });
 
@@ -260,7 +260,7 @@ class UserManagementService {
       isSignup,
       instance = this.instance,
     }: Partial<T.OAuthCallbackWithAuthenticationOptions>
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
       oAuthParams
@@ -339,7 +339,7 @@ class UserManagementService {
     uuid: string
   ): Promise<
     {
-      permission: T.Permission;
+      permission: Permission;
       userPermission: { uuid: string };
       logDateAdded: string;
     }[]
@@ -353,7 +353,7 @@ class UserManagementService {
    */
   userPermissionToggle = async (
     uuid: string,
-    permission: T.Permission
+    permission: Permission
   ): Promise<{ success: true; deleted: 1 } | { uuid: string }> =>
     this.request("/admin/permission/user/toggle", { uuid, permission });
 
