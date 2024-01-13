@@ -99,9 +99,9 @@ class UserManagementService <Permission extends T.Permission = T.Permission>{
       subject: string;
       body: (activationToken: string) => string;
     }
-  ): Promise<T.AuthenticationOut & T.Tokens & { activationToken: string }> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens & { activationToken: string }> => {
     const response = await this.request<
-      T.AuthenticationOut & { refreshToken: string; activationToken: string }
+      T.AuthenticationOut<Permission> & { refreshToken: string; activationToken: string }
     >("/signup", {
       profile,
       instance,
@@ -138,9 +138,9 @@ class UserManagementService <Permission extends T.Permission = T.Permission>{
     authentication: T.Authentication,
     email?: string,
     ip?: string
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { profile, permissions, locale, refreshToken } = await this.request<
-      T.AuthenticationOut & { refreshToken: string }
+      T.AuthenticationOut<Permission> & { refreshToken: string }
     >("/authenticate", { authentication, email, ip });
 
     const accessToken = this.getAccessToken(
@@ -207,7 +207,7 @@ class UserManagementService <Permission extends T.Permission = T.Permission>{
   };
 
   refresh = async (refreshToken: string): Promise<T.RefreshOut> => {
-    const r = await this.request<T.AuthenticationOut>("/refresh", {
+    const r = await this.request<T.AuthenticationOut<Permission>>("/refresh", {
       refreshToken,
     });
 
@@ -260,7 +260,7 @@ class UserManagementService <Permission extends T.Permission = T.Permission>{
       isSignup,
       instance = this.instance,
     }: Partial<T.OAuthCallbackWithAuthenticationOptions>
-  ): Promise<T.AuthenticationOut & T.Tokens> => {
+  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
       oAuthParams
