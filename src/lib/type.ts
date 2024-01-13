@@ -36,6 +36,8 @@ export enum Permission {
   app = 1,
   admin = 2,
   superadmin = 3,
+  billing = 4
+  // beyong 4, permissions are custom and depend on the instance
 }
 
 export interface AuthenticationOut {
