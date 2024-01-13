@@ -12,7 +12,7 @@ export interface UserManagementOptions {
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
-class UserManagementService {
+class UserManagementService <Permission extends T.Permission>{
   token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
 
@@ -339,7 +339,7 @@ class UserManagementService {
     uuid: string
   ): Promise<
     {
-      permission: T.Permission;
+      permission: Permission;
       userPermission: { uuid: string };
       logDateAdded: string;
     }[]
@@ -353,7 +353,7 @@ class UserManagementService {
    */
   userPermissionToggle = async (
     uuid: string,
-    permission: T.Permission
+    permission: Permission
   ): Promise<{ success: true; deleted: 1 } | { uuid: string }> =>
     this.request("/admin/permission/user/toggle", { uuid, permission });
 
