@@ -36,7 +36,7 @@ export enum Permission {
   app = 1,
   admin = 2,
   superadmin = 3,
-  billing = 4
+  billing = 4,
   // beyong 4, permissions are custom and depend on the instance
 }
 
@@ -80,7 +80,7 @@ export interface ErrorAuthorization {
   status: number;
 }
 
-export interface TokenShape <P extends Permission = Permission> {
+export interface TokenShape<P extends Permission = Permission> {
   id: string;
   email: string;
   instanceId: string;
@@ -108,6 +108,11 @@ export interface ActionPayload {
   action: Action;
   issued: number;
   expires: number;
+}
+
+export interface AuthenticationOut2FA {
+  payload: string;
+  action: "2FA";
 }
 
 export interface UserAuthentication {

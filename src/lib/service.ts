@@ -12,6 +12,15 @@ export interface UserManagementOptions {
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
+const isAuthenticationOut2FA = (r: any): r is T.AuthenticationOut2FA => {
+  return (
+    "action" in r &&
+    r.action === "2FA" &&
+    "payload" in r &&
+    typeof r.payload === "string"
+  );
+};
+
 class UserManagementService<Permission extends T.Permission = T.Permission> {
   token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
@@ -144,15 +153,25 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     instance?: { uuid: string }, // if the instance of the user differs from the main instance (multi tenant setup)
     email?: string,
     ip?: string
-  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
-    const { profile, permissions, locale, refreshToken } = await this.request<
-      T.AuthenticationOut<Permission> & { refreshToken: string }
+  ): Promise<
+    (T.AuthenticationOut<Permission> & T.Tokens) | T.AuthenticationOut2FA
+  > => {
+    //const {payload, action:'2FA'}
+    const r = await this.request<
+      | (T.AuthenticationOut<Permission> & { refreshToken: string })
+      | T.AuthenticationOut2FA
     >("/authenticate", {
       authentication,
       email,
       ip,
       instanceUuid: instance?.uuid,
     });
+
+    if (isAuthenticationOut2FA(r)) {
+      return { action: r.action, payload: r.payload };
+    }
+
+    const { profile, permissions, locale, refreshToken } = r;
 
     const accessToken = this.getAccessToken(
       profile.id,
@@ -301,7 +320,18 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
         return response;
       }
 
-      return this.authenticate({ type, value: email }, instance, undefined, ip);
+      const r = await this.authenticate(
+        { type, value: email },
+        instance,
+        undefined,
+        ip
+      );
+
+      if (isAuthenticationOut2FA(r)) {
+        throw Error("signup returns 2fa, cant happen");
+      }
+
+      return r;
     } catch (err) {
       throw Error((err as Error).message);
     }
