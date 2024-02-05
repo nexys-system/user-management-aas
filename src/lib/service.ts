@@ -147,7 +147,12 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
   ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { profile, permissions, locale, refreshToken } = await this.request<
       T.AuthenticationOut<Permission> & { refreshToken: string }
-    >("/authenticate", { authentication, email, ip, instance });
+    >("/authenticate", {
+      authentication,
+      email,
+      ip,
+      instanceUuid: instance?.uuid,
+    });
 
     const accessToken = this.getAccessToken(
       profile.id,
