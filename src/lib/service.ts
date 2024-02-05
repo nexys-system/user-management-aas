@@ -12,15 +12,6 @@ export interface UserManagementOptions {
   emailCallback?: (subject: string, body: string, to: string) => Promise<void>; // Function to handle sending emails, receives subject, body, and recipient's email address.
 }
 
-const isAuthenticationOut2FA = (r: any): r is T.AuthenticationOut2FA => {
-  return (
-    "action" in r &&
-    r.action === "2FA" &&
-    "payload" in r &&
-    typeof r.payload === "string"
-  );
-};
-
 class UserManagementService<Permission extends T.Permission = T.Permission> {
   token: string;
   request: <A = any>(path: string, payload?: any) => Promise<A>;
@@ -167,7 +158,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       instanceUuid: instance?.uuid,
     });
 
-    if (isAuthenticationOut2FA(r)) {
+    if (U.isAuthenticationOut2FA(r)) {
       return { action: r.action, payload: r.payload };
     }
 
@@ -327,7 +318,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
         ip
       );
 
-      if (isAuthenticationOut2FA(r)) {
+      if (U.isAuthenticationOut2FA(r)) {
         throw Error("signup returns 2fa, cant happen");
       }
 

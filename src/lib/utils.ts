@@ -187,3 +187,12 @@ export const authenticationServiceToType = (
 
 export const generateSecretKey = (length: number = 16): string =>
   crypto.randomBytes(length).toString("hex");
+
+export const isAuthenticationOut2FA = (r: any): r is T.AuthenticationOut2FA => {
+  return (
+    "action" in r &&
+    r.action === "2FA" &&
+    "payload" in r &&
+    typeof r.payload === "string"
+  );
+};
