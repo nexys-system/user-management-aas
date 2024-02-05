@@ -126,3 +126,7 @@ export type StateShape<P extends Permission = Permission> = Pick<
   TokenShape<P>,
   "id" | "email" | "instanceId" | "permissions"
 >;
+
+export type AuthAnd2FAOut<P extends Permission> =
+  | (AuthenticationOut<P> & Tokens)
+  | AuthenticationOut2FA;

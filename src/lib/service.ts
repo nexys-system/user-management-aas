@@ -103,10 +103,10 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     T.AuthenticationOut<Permission> & T.Tokens & { activationToken: string }
   > => {
     const response = await this.request<
-      T.AuthenticationOut<Permission> & {
-        refreshToken: string;
-        activationToken: string;
-      }
+      T.AuthenticationOut<Permission> &
+        T.Tokens & {
+          activationToken: string;
+        }
     >("/signup", {
       profile,
       instance,
@@ -144,10 +144,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     instance?: { uuid: string }, // if the instance of the user differs from the main instance (multi tenant setup)
     email?: string,
     ip?: string
-  ): Promise<
-    (T.AuthenticationOut<Permission> & T.Tokens) | T.AuthenticationOut2FA
-  > => {
-    //const {payload, action:'2FA'}
+  ): Promise<T.AuthAnd2FAOut<Permission>> => {
     const r = await this.request<
       | (T.AuthenticationOut<Permission> & { refreshToken: string })
       | T.AuthenticationOut2FA
@@ -158,12 +155,36 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       instanceUuid: instance?.uuid,
     });
 
+    // if 2FA is required the authentication process is aborted and a different response is returned, so the user can resume the authentiation journey, ie. pass the TOTP code
+    // authenticate2FA will then need to be called
     if (U.isAuthenticationOut2FA(r)) {
       return { action: r.action, payload: r.payload };
     }
 
-    const { profile, permissions, locale, refreshToken } = r;
+    return this.toAuthOut(r);
+  };
 
+  // function to resume and complete the 2FA process
+  authenticate2FA = async (code: string, payload: string, ip: string) => {
+    const r = await this.request<
+      T.AuthenticationOut<Permission> & { refreshToken: string }
+    >("/authenticate2FA", {
+      code,
+      payload,
+      ip,
+    });
+
+    return this.toAuthOut(r);
+  };
+
+  toAuthOut = ({
+    profile,
+    permissions,
+    locale,
+    refreshToken,
+  }: T.AuthenticationOut<Permission> & {
+    refreshToken: string;
+  }): T.AuthenticationOut<Permission> & T.Tokens => {
     const accessToken = this.getAccessToken(
       profile.id,
       profile.email,
