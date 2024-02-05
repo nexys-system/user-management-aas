@@ -243,7 +243,8 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       status,
     });
 
-  profile = async (uuid: string) => this.request("/profile", { uuid });
+  profile = async (uuid: string, instance: { uuid: string }) =>
+    this.request("/profile", { uuid, instanceUuid: instance.uuid });
 
   profileUpdate = async (
     uuid: string,
