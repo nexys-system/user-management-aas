@@ -136,12 +136,13 @@ class UserManagementService {
 
   authenticate = async (
     authentication: T.Authentication,
+    instance?: { uuid: string }, // if the instance of the user differs from the main instance (multi tenant setup)
     email?: string,
     ip?: string
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const { profile, permissions, locale, refreshToken } = await this.request<
       T.AuthenticationOut & { refreshToken: string }
-    >("/authenticate", { authentication, email, ip });
+    >("/authenticate", { authentication, email, ip, instance });
 
     const accessToken = this.getAccessToken(
       profile.id,
@@ -259,7 +260,8 @@ class UserManagementService {
     {
       isSignup,
       instance = this.instance,
-    }: Partial<T.OAuthCallbackWithAuthenticationOptions>
+    }: Partial<T.OAuthCallbackWithAuthenticationOptions>,
+    ip?: string
   ): Promise<T.AuthenticationOut & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
@@ -288,7 +290,7 @@ class UserManagementService {
         return response;
       }
 
-      return this.authenticate({ type, value: email });
+      return this.authenticate({ type, value: email }, instance, undefined, ip);
     } catch (err) {
       throw Error((err as Error).message);
     }
