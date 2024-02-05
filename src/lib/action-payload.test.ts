@@ -6,7 +6,7 @@ import {
 import { generateSecretKey } from "./utils";
 import { Action, AuthenticationOut, Locale, Permission, Profile } from "./type";
 
-test("encrypt / descrupt", () => {
+test("encrypt / decrypt", () => {
   const secretKey = generateSecretKey(); // Generate a secret key for testing
   const id = "id";
   const instanceUuid = "instanceUuid";
