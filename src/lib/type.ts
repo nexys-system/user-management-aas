@@ -36,12 +36,14 @@ export enum Permission {
   app = 1,
   admin = 2,
   superadmin = 3,
+  billing = 4
+  // beyong 4, permissions are custom and depend on the instance
 }
 
-export interface AuthenticationOut {
+export interface AuthenticationOut<P extends Permission = Permission> {
   profile: Profile;
   locale: Locale;
-  permissions: Permission[];
+  permissions: P[];
 }
 
 export type RefreshOut = AuthenticationOut & Pick<Tokens, "accessToken">;
@@ -78,11 +80,11 @@ export interface ErrorAuthorization {
   status: number;
 }
 
-export interface TokenShape {
+export interface TokenShape <P extends Permission = Permission> {
   id: string;
   email: string;
   instanceId: string;
-  permissions: number[];
+  permissions: P[];
   iat: number;
   exp: number;
 }
@@ -115,7 +117,7 @@ export interface UserAuthentication {
   type: AuthenticationType;
 }
 
-export type StateShape = Pick<
-  TokenShape,
+export type StateShape<P extends Permission = Permission> = Pick<
+  TokenShape<P>,
   "id" | "email" | "instanceId" | "permissions"
 >;
