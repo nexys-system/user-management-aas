@@ -180,9 +180,15 @@ export const authenticationServiceToType = (
   switch (service) {
     case "github":
       return T.AuthenticationType.github;
-    default:
+    case "google":
       return T.AuthenticationType.google;
+    case "swissid":
+      return T.AuthenticationType.swissId;
+    case "microsoft":
+      return T.AuthenticationType.microsoft;
   }
+
+  throw Error("could not map sso service to authentication type");
 };
 
 export const generateSecretKey = (length: number = 16): string =>

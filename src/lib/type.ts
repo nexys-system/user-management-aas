@@ -3,11 +3,11 @@ export enum AuthenticationType {
   google = 2,
   github = 3,
   // linkedin = 4,
-  // microsoft = 5,
+  microsoft = 5,
   // ibm = 6,
   ethereum = 7,
   // twitter = 8,
-  // swissId = 9,
+  swissId = 9,
 }
 
 export type AuthenticationServices =
