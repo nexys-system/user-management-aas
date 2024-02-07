@@ -130,3 +130,15 @@ export type StateShape<P extends Permission = Permission> = Pick<
 export type AuthAnd2FAOut<P extends Permission> =
   | (AuthenticationOut<P> & Tokens)
   | AuthenticationOut2FA;
+
+export interface SystemLog {
+  uuid: string;
+  instance?: { uuid: string };
+  user?: { uuid: string };
+  logLevel: number;
+  eventId?: string;
+  message?: string;
+  payload?: string;
+  ip?: string;
+  logDateAdded: Date;
+}
