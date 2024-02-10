@@ -8,6 +8,7 @@ export enum AuthenticationType {
   ethereum = 7,
   // twitter = 8,
   swissId = 9,
+  webauthn = 10,
 }
 
 export type AuthenticationServices =
