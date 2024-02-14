@@ -95,6 +95,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication,
     instance: { uuid?: string; name?: string } = this.instance,
+    ip?: string,
     emailMessage?: {
       subject: string;
       body: (activationToken: string) => string;
@@ -111,6 +112,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       profile,
       instance,
       authentication,
+      ip,
     });
 
     const accessToken = this.getAccessToken(
@@ -324,7 +326,8 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
             type,
             value: email,
           },
-          instance
+          instance,
+          ip
         );
 
         await this.statusChange(response.profile.id, T.UserStatus.active);
