@@ -94,7 +94,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
   signup = async (
     profile: Pick<T.Profile, "firstName" | "lastName" | "email">,
     authentication: T.Authentication,
-    instance: { uuid: string } = this.instance,
+    instance: { uuid?: string; name?: string } = this.instance,
     emailMessage?: {
       subject: string;
       body: (activationToken: string) => string;
@@ -116,7 +116,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     const accessToken = this.getAccessToken(
       response.profile.id,
       response.profile.email,
-      instance.uuid,
+      response.profile.instance.uuid,
       response.permissions
     );
 
@@ -332,9 +332,17 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
         return response;
       }
 
+      if ("name" in instance) {
+        throw Error("Login: instance name cannot be given");
+      }
+
+      if (!("uuid" in instance)) {
+        throw Error("Login: instance uuid must be given");
+      }
+
       const r = await this.authenticate(
         { type, value: email },
-        instance,
+        { uuid: instance.uuid || "" },
         undefined,
         ip
       );

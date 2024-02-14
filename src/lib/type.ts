@@ -67,7 +67,7 @@ export interface OAuthParams {
 
 export interface OAuthCallbackWithAuthenticationOptions {
   isSignup: boolean;
-  instance: { uuid: string };
+  instance: Partial<{ uuid: string; name: string }>;
 }
 
 export enum UserStatus {
