@@ -207,6 +207,17 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     UserAuthentication?: T.UserAuthentication[];
   }> => this.request("/user-by-email", { email, instance });
 
+  userByAttribute = async (
+    attribute: { key: "email" | "uuid"; value: string },
+    instance: { uuid: string }
+  ): Promise<{
+    profile: T.Profile;
+    status: T.UserStatus;
+    locale: T.Locale;
+    UserAuthentication?: T.UserAuthentication[] | undefined;
+    faSecret?: string | undefined;
+  }> => this.request("/user-by-attribute", { attribute, instance });
+
   /**
    * Initiates the password recovery process for users by accepting their registered email. If the email is found in the system, a password reset token is sent to it.
    * @returns token
