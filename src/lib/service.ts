@@ -60,6 +60,8 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
 
     const jwtSecretOrPrivateKey =
       typeof jwtSecret === "string" ? jwtSecret : jwtSecret.privateKey;
+    const jwtSecretOrPublicKey =
+      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.publicKey;
     const algorithm: JWT.Algorithm | undefined =
       typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined;
 
@@ -73,12 +75,14 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       options.tokenValidity || tokenValidityDefault
     );
 
+    const tokenValidity = options.tokenValidity || tokenValidityDefault;
+
     this.authorize = U.authorize(
       this.refresh,
       this.getAccessToken,
-      typeof jwtSecret === "string" ? jwtSecret : jwtSecret.publicKey,
-      options.tokenValidity || tokenValidityDefault,
-      typeof jwtSecret !== "string" ? jwtSecret.algorithm : undefined
+      jwtSecretOrPublicKey,
+      tokenValidity,
+      algorithm
     );
 
     // set notification callback function
@@ -143,9 +147,16 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
 
   authenticate = async (
     authentication: T.Authentication,
-    instance?: { uuid: string }, // if the instance of the user differs from the main instance (multi tenant setup)
-    email?: string,
-    ip?: string
+    {
+      instance,
+      email,
+      ip,
+    }: {
+      instance?: { uuid: string }; // if the instance of the user differs from the main instance (multi tenant setup)
+      email?: string;
+      ip?: string;
+    },
+    options: T.AuthOutOptions
   ): Promise<T.AuthAnd2FAOut<Permission>> => {
     const r = await this.request<
       | (T.AuthenticationOut<Permission> & { refreshToken: string })
@@ -155,6 +166,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       email,
       ip,
       instanceUuid: instance?.uuid,
+      options,
     });
 
     // if 2FA is required the authentication process is aborted and a different response is returned, so the user can resume the authentiation journey, ie. pass the TOTP code
@@ -167,13 +179,19 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
   };
 
   // function to resume and complete the 2FA process
-  authenticate2FA = async (code: string, payload: string, ip: string) => {
+  authenticate2FA = async (
+    code: string,
+    payload: string,
+    ip: string,
+    options: T.AuthOutOptions
+  ) => {
     const r = await this.request<
       T.AuthenticationOut<Permission> & { refreshToken: string }
     >("/authenticate2FA", {
       code,
       payload,
       ip,
+      options,
     });
 
     return this.toAuthOut(r);
@@ -315,8 +333,9 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     {
       isSignup,
       instance = this.instance,
+      ip,
     }: Partial<T.OAuthCallbackWithAuthenticationOptions>,
-    ip?: string
+    options: T.AuthOutOptions
   ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
@@ -354,12 +373,12 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
         throw Error("Login: instance uuid must be given");
       }
 
-      const r = await this.authenticate(
-        { type, value: email },
-        { uuid: instance.uuid || "" },
-        undefined,
-        ip
-      );
+      const extra = {
+        instance: { uuid: instance.uuid || "" },
+        ip,
+      };
+
+      const r = await this.authenticate({ type, value: email }, extra, options);
 
       if (U.isAuthenticationOut2FA(r)) {
         throw Error("signup returns 2fa, cant happen");

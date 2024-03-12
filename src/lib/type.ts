@@ -47,6 +47,10 @@ export interface AuthenticationOut<P extends Permission = Permission> {
   permissions: P[];
 }
 
+export interface AuthOutOptions {
+  refreshTokenValidity?: number;
+}
+
 export type RefreshOut = AuthenticationOut & Pick<Tokens, "accessToken">;
 
 export type AuthorizeOut =
@@ -68,6 +72,7 @@ export interface OAuthParams {
 export interface OAuthCallbackWithAuthenticationOptions {
   isSignup: boolean;
   instance: Partial<{ uuid: string; name: string }>;
+  ip?: string;
 }
 
 export enum UserStatus {
