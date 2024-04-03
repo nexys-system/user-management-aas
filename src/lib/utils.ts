@@ -186,6 +186,8 @@ export const authenticationServiceToType = (
       return T.AuthenticationType.swissId;
     case "microsoft":
       return T.AuthenticationType.microsoft;
+    case "apple":
+      return T.AuthenticationType.apple;
   }
 
   throw Error("could not map sso service to authentication type");

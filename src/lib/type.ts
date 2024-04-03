@@ -9,6 +9,7 @@ export enum AuthenticationType {
   // twitter = 8,
   swissId = 9,
   webauthn = 10,
+  apple = 11,
 }
 
 export type AuthenticationServices =
@@ -16,7 +17,8 @@ export type AuthenticationServices =
   | "github"
   | "zoho"
   | "swissid"
-  | "microsoft";
+  | "microsoft"
+  | "apple";
 
 export interface Authentication {
   value: string;
