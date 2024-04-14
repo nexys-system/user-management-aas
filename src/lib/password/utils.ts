@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { AuthenticationType } from "../type";
+import { AuthenticationType } from "../type.js";
 
 export const matchPassword = (p: string, hash: string): Promise<boolean> =>
   bcrypt.compare(p, hash);

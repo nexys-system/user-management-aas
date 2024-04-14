@@ -2,9 +2,15 @@ import {
   twoFaPayload,
   createActionPayload,
   decryptPayload,
-} from "./action-payload";
-import { generateSecretKey } from "./utils";
-import { Action, AuthenticationOut, Locale, Permission, Profile } from "./type";
+} from "./action-payload.js";
+import { generateSecretKey } from "./utils.js";
+import {
+  Action,
+  AuthenticationOut,
+  Locale,
+  Permission,
+  Profile,
+} from "./type.js";
 
 test("encrypt / decrypt", () => {
   const secretKey = generateSecretKey(); // Generate a secret key for testing

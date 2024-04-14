@@ -1,5 +1,5 @@
-import { AuthenticationType } from "../type";
-import * as U from "./utils";
+import { AuthenticationType } from "../type.js";
+import * as U from "./utils.js";
 
 test("hideHashedPassword", () => {
   const ua = {

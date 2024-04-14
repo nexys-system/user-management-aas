@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { generateKeyPairSync } from "crypto";
-import { RefreshOut } from "./type";
-import * as U from "./utils";
+import { RefreshOut } from "./type.js";
+import * as U from "./utils.js";
 
 const id = "123";
 const email = "j@b";
