@@ -1,8 +1,6 @@
-// see https://stackoverflow.com/a/74112582/1659569
-/// <reference lib="dom" />
 import crypto from "crypto";
 import JWT from "jsonwebtoken";
-import * as T from "./type";
+import * as T from "./type.js";
 
 export const jwtAlgorithmDefault: JWT.Algorithm = "RS256";
 

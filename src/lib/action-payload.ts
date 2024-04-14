@@ -1,5 +1,5 @@
 import * as CryptoService from "@nexys/crypto";
-import { Action, ActionPayload, AuthenticationOut } from "./type";
+import { Action, ActionPayload, AuthenticationOut } from "./type.js";
 
 type Uuid = string;
 

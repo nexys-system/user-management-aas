@@ -1,10 +1,10 @@
 // this is the only part of the library that is Koa dependent
 import Koa from "koa";
 
-import * as Constants from "./constants";
-import * as Utils from "./utils";
-import UserManagementService from "./service";
-import { StateShape, Permission } from "./type";
+import * as Constants from "./constants.js";
+import * as Utils from "./utils.js";
+import UserManagementService from "./service.js";
+import { StateShape, Permission } from "./type.js";
 
 export const isAuthenticatedNonMiddleware =
   (userManagement: UserManagementService) => async (ctx: Koa.Context) => {
