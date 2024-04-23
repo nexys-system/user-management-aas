@@ -52,7 +52,7 @@ export const isAuthenticated =
     return;
   };
 
-export const hasPermission = (permission: Permission) => async (ctx: any) => {
+export const hasPermission = (permission: Permission) => async (ctx: any, next:any) => {
   const { permissions } = ctx.state;
 
   //  console.log("in", permission, permissions);
@@ -70,4 +70,6 @@ export const hasPermission = (permission: Permission) => async (ctx: any) => {
     };
     return;
   }
+
+  await next();
 };
