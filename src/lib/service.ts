@@ -336,7 +336,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       ip,
     }: Partial<T.OAuthCallbackWithAuthenticationOptions>,
     options: T.AuthOutOptions
-  ): Promise<T.AuthenticationOut<Permission> & T.Tokens> => {
+  ): Promise<T.AuthAnd2FAOut<Permission>> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
       oAuthParams
@@ -362,6 +362,10 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
 
         await this.statusChange(response.profile.id, T.UserStatus.active);
 
+        if (U.isAuthenticationOut2FA(response)) {
+          throw Error("signup returns 2fa, cant happen");
+        }
+
         return response;
       }
 
@@ -379,10 +383,6 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       };
 
       const r = await this.authenticate({ type, value: email }, extra, options);
-
-      if (U.isAuthenticationOut2FA(r)) {
-        throw Error("signup returns 2fa, cant happen");
-      }
 
       return r;
     } catch (err) {
