@@ -335,7 +335,7 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
       instance = this.instance,
       ip,
     }: Partial<T.OAuthCallbackWithAuthenticationOptions>,
-    options: T.AuthOutOptions
+    options: T.AuthOutOptions = {}
   ): Promise<T.AuthAnd2FAOut<Permission>> => {
     const { firstName, lastName, email } = await this.oAuthCallback(
       code,
