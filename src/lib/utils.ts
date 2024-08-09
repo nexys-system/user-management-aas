@@ -45,7 +45,7 @@ export const getAccessToken =
     }: { jwtSecretOrPrivateKey: string; algorithm?: JWT.Algorithm },
     tokenValidity: number
   ) =>
-  (id: string, email: string, instanceId: string, permissions: number[]) => {
+  (id: string, email: string, instanceId: string, permissions: number[], extra: {[k:string]:any} = {}) => {
     const exp = Math.floor(new Date().getTime() / 1000 + tokenValidity);
 
     const tokenContent: Omit<T.TokenShape, "iat"> = {
@@ -54,6 +54,7 @@ export const getAccessToken =
       instanceId,
       permissions,
       exp,
+      ... extra
     };
 
     const options: JWT.SignOptions = {};
