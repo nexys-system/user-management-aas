@@ -410,6 +410,38 @@ class UserManagementService<Permission extends T.Permission = T.Permission> {
     });
 
   // CRUD
+  // instance
+  instanceList = async () => this.request("/instance/list");
+  instanceInsert = async (name: string) =>
+    this.request("/instance/insert", { data: { name } });
+  instanceUpdate = async (uuid: string, name: string) =>
+    this.request("/instance/update", { uuid, data: { name } });
+  instanceDelete = async (uuid: string) =>
+    this.request("/instance/delete", { uuid });
+
+  // instance permissions
+  instancePermissionList = async (instance: { uuid: string }) =>
+    this.request("/instance/permission/list", { uuid: instance.uuid });
+
+  instancePermissionAssign = async (
+    instance: { uuid: string },
+    permissionIdxs: number[]
+  ) =>
+    this.request("/instance/permission/assign", {
+      uuid: instance.uuid,
+      permissionIdxs,
+    });
+
+  instancePermissionRevoke = async (
+    instance: { uuid: string },
+    permissionIdxs: number[]
+  ) =>
+    this.request("/instance/permission/revoke", {
+      uuid: instance.uuid,
+      permissionIdxs,
+    });
+
+  // user
   list = async () => this.request("/admin/list");
 
   detail = async (uuid: string) => this.request("/admin/detail", { uuid });
